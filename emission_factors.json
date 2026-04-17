@@ -1,0 +1,157 @@
+{
+  "country": "Malaysia",
+  "last_updated": "2026-04-01",
+  "version": "1.0",
+
+  "electricity_grid": {
+    "malaysia_grid": {
+      "factor": 0.7,
+      "unit": "kg CO2 per kWh",
+      "source": "Suruhanjaya Tenaga (Energy Commission of Malaysia)",
+      "year": 2024,
+      "notes": "National grid average emission factor"
+    }
+  },
+
+  "fuels": {
+    "diesel": {
+      "factor": 2.68,
+      "unit": "kg CO2 per litre",
+      "source": "IPCC AR6",
+      "density_kg_per_litre": 0.84
+    },
+    "natural_gas": {
+      "factor": 2.02,
+      "unit": "kg CO2 per cubic metre",
+      "source": "IPCC AR6",
+      "net_calorific_value": 38.8
+    },
+    "lpg": {
+      "factor": 2.98,
+      "unit": "kg CO2 per kg",
+      "source": "IPCC AR6"
+    },
+    "coal_bituminous": {
+      "factor": 2.42,
+      "unit": "kg CO2 per kg",
+      "source": "IPCC AR6"
+    },
+    "fuel_oil": {
+      "factor": 3.11,
+      "unit": "kg CO2 per litre",
+      "source": "IPCC AR6"
+    }
+  },
+
+  "cbam_defaults": {
+    "steel_hot_rolled": {
+      "factor": 1.8,
+      "unit": "tonne CO2 per tonne steel",
+      "source": "EU CBAM Default Values 2025",
+      "applicable_to": "hot rolled steel products"
+    },
+    "steel_rebar": {
+      "factor": 1.6,
+      "unit": "tonne CO2 per tonne steel",
+      "source": "EU CBAM Default Values 2025"
+    },
+    "aluminum_ingot": {
+      "factor": 8.5,
+      "unit": "tonne CO2 per tonne aluminum",
+      "source": "EU CBAM Default Values 2025",
+      "notes": "Primary aluminum from smelting"
+    },
+    "aluminum_extrusion": {
+      "factor": 9.2,
+      "unit": "tonne CO2 per tonne aluminum",
+      "source": "EU CBAM Default Values 2025"
+    },
+    "cement": {
+      "factor": 0.9,
+      "unit": "tonne CO2 per tonne cement",
+      "source": "EU CBAM Default Values 2025"
+    },
+    "fertilizer_ammonia": {
+      "factor": 2.1,
+      "unit": "tonne CO2 per tonne ammonia",
+      "source": "EU CBAM Default Values 2025"
+    },
+    "fertilizer_urea": {
+      "factor": 2.4,
+      "unit": "tonne CO2 per tonne urea",
+      "source": "EU CBAM Default Values 2025"
+    },
+    "hydrogen": {
+      "factor": 12.0,
+      "unit": "tonne CO2 per tonne hydrogen",
+      "source": "EU CBAM Default Values 2025"
+    }
+  },
+
+  "product_types": {
+    "steel": {
+      "name": "Steel Products",
+      "hs_code_range": "7200-7300",
+      "cbam_covered": true,
+      "unit": "tonnes",
+      "embedded_emission_factor": 1.8
+    },
+    "aluminum": {
+      "name": "Aluminum Products",
+      "hs_code_range": "7600-7609",
+      "cbam_covered": true,
+      "unit": "tonnes",
+      "embedded_emission_factor": 8.5
+    },
+    "cement": {
+      "name": "Cement",
+      "hs_code_range": "2523",
+      "cbam_covered": true,
+      "unit": "tonnes",
+      "embedded_emission_factor": 0.9
+    },
+    "fertilizer": {
+      "name": "Fertilizer",
+      "hs_code_range": "3100-3105",
+      "cbam_covered": true,
+      "unit": "tonnes",
+      "embedded_emission_factor": 2.1
+    },
+    "hydrogen": {
+      "name": "Hydrogen",
+      "hs_code_range": "2804",
+      "cbam_covered": true,
+      "unit": "tonnes",
+      "embedded_emission_factor": 12.0
+    },
+    "electricity": {
+      "name": "Electricity",
+      "hs_code_range": "2716",
+      "cbam_covered": true,
+      "unit": "MWh",
+      "embedded_emission_factor": 0.7
+    }
+  },
+
+  "calculation_methods": {
+    "cbam_embedded_emissions": {
+      "formula": "EE = sum(Activity Data_i × Emission Factor_i) / Production Quantity",
+      "scope_1_included": true,
+      "scope_2_included": true,
+      "scope_3_note": "Scope 3 only included for imported semi-finished products under CBAM"
+    },
+    "ghg_protocol_corporate": {
+      "formula": "Total = Scope1 + Scope2 + Scope3",
+      "scope1": "Direct emissions from owned/controlled sources",
+      "scope2": "Indirect emissions from purchased electricity",
+      "scope3": "All other indirect emissions in value chain"
+    }
+  },
+
+  "uncertainty_bands": {
+    "electricity_data": "±5%",
+    "fuel_consumption": "±3%",
+    "production_quantity": "±2%",
+    "emission_factor": "±10%"
+  }
+}

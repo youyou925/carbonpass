@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>碳迹智识 - 智能票据识别</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00C853;
+            --primary-light: #00E676;
+            --primary-dark: #00A844;
+            --accent: #00B0FF;
+            --bg: #F5F7FA;
+            --card-bg: #FFFFFF;
+            --text-primary: #1A1A1A;
+            --text-secondary: #666666;
+            --text-hint: #999999;
+            --border: #E8ECF0;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+
+        /* Header */
+        .header {
+            background: var(--card-bg);
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        .header-badge {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Main Container */
+        .main {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Upload Card */
+        .upload-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: box-shadow 0.3s;
+        }
+
+        .upload-card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Upload Area */
+        .upload-zone {
+            padding: 48px 32px;
+            text-align: center;
+            position: relative;
+        }
+
+        .upload-border {
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            padding: 40px 24px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .upload-border:hover {
+            border-color: var(--primary);
+            background: rgba(0, 200, 83, 0.03);
+        }
+
+        .upload-border.active {
+            border-color: var(--primary);
+            border-style: solid;
+            background: rgba(0, 200, 83, 0.05);
+        }
+
+        .upload-icon-wrap {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, rgba(0, 200, 83, 0.1) 0%, rgba(0, 176, 255, 0.1) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .upload-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            font-size: 13px;
+            color: var(--text-hint);
+        }
+
+        .upload-formats {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .format-tag {
+            background: var(--bg);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* Camera Button */
+        .camera-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: calc(100% - 64px);
+            margin: 24px auto 0;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .camera-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 200, 83, 0.3);
+        }
+
+        .camera-btn:active {
+            transform: translateY(0);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* Result Section */
+        .result-section {
+            padding: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .result-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .result-title-icon {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .result-badge {
+            background: var(--primary);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* Image Preview */
+        .preview-wrap {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--bg);
+            margin-bottom: 16px;
+        }
+
+        .preview-image {
+            width: 100%;
+            display: block;
+            max-height: 300px;
+            object-fit: contain;
+        }
+
+        .preview-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 12px 16px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.6));
+            color: white;
+            font-size: 12px;
+        }
+
+        /* Text Result */
+        .result-text-wrap {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 16px;
+            position: relative;
+        }
+
+        .result-text {
+            font-family: "SF Mono", "Consolas", monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            color: var(--text-primary);
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .result-text::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .result-text::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .result-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-hint);
+        }
+
+        .result-empty-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        /* Action Buttons */
+        .action-bar {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .action-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-copy {
+            background: var(--primary);
+            color: white;
+        }
+
+        .action-copy:hover {
+            background: var(--primary-dark);
+        }
+
+        .action-export {
+            background: var(--bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .action-export:hover {
+            background: var(--border);
+        }
+
+        /* Tips Section */
+        .tips-section {
+            margin-top: 20px;
+            padding: 16px;
+            background: linear-gradient(135deg, rgba(0, 200, 83, 0.05) 0%, rgba(0, 176, 255, 0.05) 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 200, 83, 0.1);
+        }
+
+        .tips-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .tips-content {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Processing Animation */
+        .processing {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .processing.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .processing-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: var(--text-hint);
+            font-size: 12px;
+        }
+
+        .footer span {
+            color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .main {
+                padding: 16px;
+            }
+            .upload-zone {
+                padding: 32px 16px;
+            }
+            .camera-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">🌱</div>
+            <div class="logo-text">碳迹<span>智识</span></div>
+        </div>
+        <div class="header-badge">双碳专用</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+        <!-- Upload Card -->
+        <div class="upload-card">
+            <!-- Upload Zone -->
+            <div class="upload-zone">
+                <div class="upload-border" id="uploadBorder" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon-wrap">📷</div>
+                    <div class="upload-title">点击上传票据图片</div>
+                    <div class="upload-hint">或拖拽图片到这里</div>
+                    <div class="upload-formats">
+                        <span class="format-tag">JPG</span>
+                        <span class="format-tag">PNG</span>
+                        <span class="format-tag">BMP</span>
+                        <span class="format-tag">PDF</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Camera Button -->
+            <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                <input type="file" name="image" id="fileInput" accept="image/*" onchange="handleFileSelect(this)">
+                <div style="padding: 0 32px 24px;">
+                    <button type="submit" class="camera-btn" id="submitBtn">
+                        <span>🚀</span>
+                        开始智能识别
+                    </button>
+                </div>
+            </form>
+
+            <!-- Processing Animation -->
+            <div class="processing" id="processing">
+                <div class="spinner"></div>
+                <div class="processing-text">正在识别中，请稍候...</div>
+            </div>
+
+            <!-- Result Section -->
+            {% if result %}
+            <div class="result-section" id="resultSection">
+                <div class="result-header">
+                    <div class="result-title">
+                        <div class="result-title-icon">✓</div>
+                        识别完成
+                    </div>
+                    <div class="result-badge">已处理</div>
+                </div>
+
+                {% if image_path %}
+                <div class="preview-wrap">
+                    <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="票据预览" class="preview-image">
+                    <div class="preview-overlay">票据图片</div>
+                </div>
+                {% endif %}
+
+                <div class="result-text-wrap">
+                    <div class="result-text" id="resultText">{{ result }}</div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="action-btn action-copy" onclick="copyResult()">
+                        <span>📋</span> 复制结果
+                    </button>
+                    <button class="action-btn action-export" onclick="exportResult()">
+                        <span>📥</span> 导出文本
+                    </button>
+                </div>
+            </div>
+            {% else %}
+            <div class="result-section" id="resultSection">
+                <div class="result-header">
+                    <div class="result-title">
+                        <div class="result-title-icon">📝</div>
+                        识别结果
+                    </div>
+                </div>
+                <div class="result-text-wrap">
+                    <div class="result-empty" id="resultEmpty">
+                        <div class="result-empty-icon">📄</div>
+                        <div>上传票据图片即可自动识别文字</div>
+                    </div>
+                    <div class="result-text" id="resultText" style="display:none;"></div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Tips -->
+        <div class="tips-section">
+            <div class="tips-title">
+                <span>💡</span> 识别小技巧
+            </div>
+            <div class="tips-content">
+                • 确保票据文字清晰，光照均匀<br>
+                • 尽量让票据水平放置，避免倾斜<br>
+                • 高清图片识别效果更佳<br>
+                • 识别结果可一键复制，用于碳排放核算
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            碳迹智识 · 支持双碳政策下的票据碳数据提取
+        </div>
+    </div>
+
+    <script>
+        // File select handling
+        function handleFileSelect(input) {
+            if (input.files && input.files[0]) {
+                const border = document.getElementById('uploadBorder');
+                border.classList.add('active');
+                const fileName = input.files[0].name;
+                border.querySelector('.upload-title').textContent = '已选择: ' + fileName;
+                border.querySelector('.upload-hint').textContent = '点击"开始智能识别"按钮';
+            }
+        }
+
+        // Drag and drop
+        const uploadBorder = document.getElementById('uploadBorder');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadBorder.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('active');
+        });
+
+        uploadBorder.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('active');
+        });
+
+        uploadBorder.addEventListener('drop', function(e) {
+            e.preventDefault();
+            fileInput.files = e.dataTransfer.files;
+            handleFileSelect(fileInput);
+        });
+
+        // Form submit - show loading
+        document.getElementById('uploadForm').addEventListener('submit', function() {
+            const processing = document.getElementById('processing');
+            const submitBtn = document.getElementById('submitBtn');
+            if (processing) processing.classList.add('show');
+            if (submitBtn) submitBtn.disabled = true;
+        });
+
+        // Copy result
+        function copyResult() {
+            const text = document.getElementById('resultText').innerText;
+            navigator.clipboard.writeText(text).then(function() {
+                const btns = document.querySelectorAll('.action-copy');
+                btns.forEach(function(btn) {
+                    const original = btn.innerHTML;
+                    btn.innerHTML = '<span>✓</span> 已复制';
+                    btn.style.background = '#888';
+                    setTimeout(function() {
+                        btn.innerHTML = original;
+                        btn.style.background = '';
+                    }, 2000);
+                });
+            });
+        }
+
+        // Export result
+        function exportResult() {
+            const text = document.getElementById('resultText').innerText;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '识别结果_' + new Date().toISOString().slice(0,10) + '.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

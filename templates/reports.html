@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>报告历史 - CarbonPass</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00C853;
+            --primary-dark: #00A844;
+            --accent: #00B0FF;
+            --bg: #F5F7FA;
+            --card-bg: #FFFFFF;
+            --text-primary: #1A1A1A;
+            --text-secondary: #666666;
+            --text-hint: #999999;
+            --border: #E8ECF0;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+
+        .header {
+            background: var(--card-bg);
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-item {
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            background: var(--bg);
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            padding: 24px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .report-list {
+            list-style: none;
+        }
+
+        .report-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .report-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .report-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .report-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .report-icon.xml {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+        }
+
+        .report-icon.pdf {
+            background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+        }
+
+        .report-details {
+            flex: 1;
+        }
+
+        .report-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .report-meta {
+            font-size: 12px;
+            color: var(--text-hint);
+        }
+
+        .report-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-download {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-download:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-delete {
+            background: var(--bg);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-hint);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 14px;
+        }
+
+        .btn-new {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+
+        .btn-new:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/" class="logo">
+            <div class="logo-icon">🌱</div>
+            <div class="logo-text">碳迹<span>智识</span></div>
+        </a>
+        <div class="nav-menu">
+            <a href="/contact" class="nav-item">Contact Me</a>
+            <a href="/receipt" class="nav-item">票据识别</a>
+            <a href="/carbon" class="nav-item">碳足迹核算</a>
+            <a href="/cbam" class="nav-item">CBAM报告</a>
+        </div>
+    </div>
+
+    <div class="main">
+        <h1 class="page-title">📁 报告历史</h1>
+        <p class="page-subtitle">查看和下载之前生成的 CBAM 合规报告</p>
+
+        <div class="card">
+            <div class="card-title">📋 生成的报告</div>
+
+            {% if reports %}
+            <ul class="report-list">
+                {% for report in reports %}
+                <li class="report-item">
+                    <div class="report-info">
+                        <div class="report-icon {{ report.type|lower }}">
+                            {% if report.type == 'XML' %}📄{% else %}📑{% endif %}
+                        </div>
+                        <div class="report-details">
+                            <div class="report-name">{{ report.filename }}</div>
+                            <div class="report-meta">{{ report.created }} · {{ (report.size / 1024)|round(1) }} KB</div>
+                        </div>
+                    </div>
+                    <div class="report-actions">
+                        <a href="/download/{{ report.filename }}" class="btn btn-download">下载</a>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">📂</div>
+                <div class="empty-text">暂无报告记录</div>
+                <a href="/cbam" class="btn-new">
+                    <span>+</span> 创建新报告
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if reports %}
+        <div style="text-align: center; margin-top: 24px;">
+            <a href="/cbam" class="btn-new">
+                <span>+</span> 创建新报告
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

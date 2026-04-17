@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>碳足迹核算 - 碳迹智识</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00C853;
+            --primary-light: #00E676;
+            --primary-dark: #00A844;
+            --accent: #00B0FF;
+            --bg: #F5F7FA;
+            --card-bg: #FFFFFF;
+            --text-primary: #1A1A1A;
+            --text-secondary: #666666;
+            --text-hint: #999999;
+            --border: #E8ECF0;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            --orange: #FF9800;
+            --orange-light: #FFB74D;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+
+        /* Header */
+        .header {
+            background: var(--card-bg);
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-item {
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            background: var(--bg);
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        /* Main */
+        .main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        /* Carbon Result Card */
+        .result-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 20px;
+            padding: 32px;
+            color: white;
+            text-align: center;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .result-card.show {
+            display: block;
+        }
+
+        .result-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .result-unit {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 16px;
+        }
+
+        .result-detail {
+            font-size: 13px;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        /* Category Cards */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .category-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .category-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .category-card.active {
+            border-color: var(--primary);
+            background: rgba(0, 200, 83, 0.03);
+        }
+
+        .category-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .category-card:nth-child(1) .category-icon {
+            background: linear-gradient(135deg, #FFE0B2 0%, #FFCC80 100%);
+        }
+
+        .category-card:nth-child(2) .category-icon {
+            background: linear-gradient(135deg, #BBDEFB 0%, #90CAF9 100%);
+        }
+
+        .category-card:nth-child(3) .category-icon {
+            background: linear-gradient(135deg, #C8E6C9 0%, #A5D6A7 100%);
+        }
+
+        .category-card:nth-child(4) .category-icon {
+            background: linear-gradient(135deg, #F8BBD9 0%, #F48FB1 100%);
+        }
+
+        .category-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .category-hint {
+            font-size: 12px;
+            color: var(--text-hint);
+        }
+
+        /* Input Section */
+        .input-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            padding: 24px;
+            display: none;
+        }
+
+        .input-section.show {
+            display: block;
+        }
+
+        .input-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .input-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .back-btn {
+            font-size: 13px;
+            color: var(--primary);
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .input-item {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .input-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .input-field {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .input-unit {
+            font-size: 12px;
+            color: var(--text-hint);
+            margin-top: 4px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 200, 83, 0.3);
+        }
+
+        /* Calculation Table */
+        .calc-table {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .calc-header {
+            padding: 16px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .calc-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .calc-row:last-child {
+            border-bottom: none;
+        }
+
+        .calc-label {
+            color: var(--text-secondary);
+        }
+
+        .calc-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Info Box */
+        .info-box {
+            background: linear-gradient(135deg, rgba(0, 200, 83, 0.05) 0%, rgba(0, 176, 255, 0.05) 100%);
+            border: 1px solid rgba(0, 200, 83, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .info-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .info-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .category-grid {
+                grid-template-columns: 1fr;
+            }
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <a href="/" class="logo">
+            <div class="logo-icon">🌱</div>
+            <div class="logo-text">碳迹<span>智识</span></div>
+        </a>
+        <div class="nav-menu">
+            <a href="/contact" class="nav-item">Contact Me</a>
+            <a href="/receipt" class="nav-item">票据识别</a>
+            <a href="/carbon" class="nav-item active">碳足迹核算</a>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+        <h1 class="page-title">🌿 碳足迹核算</h1>
+        <p class="page-subtitle">选择您的消费场景，计算对应的碳排放量</p>
+
+        <!-- Result Card -->
+        <div class="result-card" id="resultCard">
+            <div class="result-label">您的碳足迹总量</div>
+            <div class="result-value" id="totalCarbon">0</div>
+            <div class="result-unit">千克 CO₂</div>
+            <div class="result-detail" id="resultDetail">
+                相当于种植 0 棵树来抵消
+            </div>
+        </div>
+
+        <!-- Category Grid -->
+        <div class="category-grid" id="categoryGrid">
+            <div class="category-card" onclick="selectCategory('transport')">
+                <div class="category-icon">🚗</div>
+                <div class="category-name">交通出行</div>
+                <div class="category-hint">汽油车、电动车、公交、飞机</div>
+            </div>
+
+            <div class="category-card" onclick="selectCategory('electricity')">
+                <div class="category-icon">💡</div>
+                <div class="category-name">家庭用电</div>
+                <div class="category-hint">电费账单、峰谷用电</div>
+            </div>
+
+            <div class="category-card" onclick="selectCategory('food')">
+                <div class="category-icon">🍽️</div>
+                <div class="category-name">饮食消费</div>
+                <div class="category-hint">肉类、蔬菜、外卖、零食</div>
+            </div>
+
+            <div class="category-card" onclick="selectCategory('shopping')">
+                <div class="category-icon">🛒</div>
+                <div class="category-name">购物消费</div>
+                <div class="category-hint">衣服、电子产品、日用品</div>
+            </div>
+        </div>
+
+        <!-- Transport Input -->
+        <div class="input-section" id="transportInput">
+            <div class="input-header">
+                <div class="input-title">🚗 交通出行碳排放</div>
+                <span class="back-btn" onclick="showCategories()">← 返回</span>
+            </div>
+            <div class="input-grid">
+                <div class="input-item">
+                    <div class="input-label">汽油车行驶里程</div>
+                    <input type="number" class="input-field" id="carKm" placeholder="0" min="0">
+                    <div class="input-unit">公里</div>
+                </div>
+                <div class="input-item">
+                    <div class="input-label">汽油消耗量</div>
+                    <input type="number" class="input-field" id="gasLiter" placeholder="0" min="0">
+                    <div class="input-unit">升</div>
+                </div>
+                <div class="input-item">
+                    <div class="input-label">公共交通里程</div>
+                    <input type="number" class="input-field" id="busKm" placeholder="0" min="0">
+                    <div class="input-unit">公里</div>
+                </div>
+                <div class="input-item">
+                    <div class="input-label">飞机里程</div>
+                    <input type="number" class="input-field" id="flightKm" placeholder="0" min="0">
+                    <div class="input-unit">公里</div>
+                </div>
+            </div>
+            <button class="submit-btn" onclick="calculateCarbon()">计算碳排放</button>
+        </div>
+
+        <!-- Electricity Input -->
+        <div class="input-section" id="electricityInput">
+            <div class="input-header">
+                <div class="input-title">💡 家庭用电碳排放</div>
+                <span class="back-btn" onclick="showCategories()">← 返回</span>
+            </div>
+            <div class="input-grid">
+                <div class="input-item">
+                    <div class="input-label">月用电量</div>
+                    <input type="number" class="input-field" id="electricity" placeholder="0" min="0">
+                    <div class="input-unit">千瓦时 (kWh)</div>
+                </div>
+            </div>
+            <button class="submit-btn" onclick="calculateCarbon()">计算碳排放</button>
+        </div>
+
+        <!-- Food Input -->
+        <div class="input-section" id="foodInput">
+            <div class="input-header">
+                <div class="input-title">🍽️ 饮食消费碳排放</div>
+                <span class="back-btn" onclick="showCategories()">← 返回</span>
+            </div>
+            <div class="input-grid">
+                <div class="input-item">
+                    <div class="input-label">牛肉消费</div>
+                    <input type="number" class="input-field" id="beef" placeholder="0" min="0">
+                    <div class="input-unit">公斤/月</div>
+                </div>
+                <div class="input-item">
+                    <div class="input-label">猪肉消费</div>
+                    <input type="number" class="input-field" id="pork" placeholder="0" min="0">
+                    <div class="input-unit">公斤/月</div>
+                </div>
+                <div class="input-item">
+                    <div class="input-label">蔬菜水果</div>
+                    <input type="number" class="input-field" id="vegetables" placeholder="0" min="0">
+                    <div class="input-unit">公斤/月</div>
+                </div>
+                <div class="input-item">
+                    <div class="input-label">外卖次数</div>
+                    <input type="number" class="input-field" id="takeout" placeholder="0" min="0">
+                    <div class="input-unit">次/月</div>
+                </div>
+            </div>
+            <button class="submit-btn" onclick="calculateCarbon()">计算碳排放</button>
+        </div>
+
+        <!-- Shopping Input -->
+        <div class="input-section" id="shoppingInput">
+            <div class="input-header">
+                <div class="input-title">🛒 购物消费碳排放</div>
+                <span class="back-btn" onclick="showCategories()">← 返回</span>
+            </div>
+            <div class="input-grid">
+                <div class="input-item">
+                    <div class="input-label">衣服购买</div>
+                    <input type="number" class="input-field" id="clothes" placeholder="0" min="0">
+                    <div class="input-unit">件/年</div>
+                </div>
+                <div class="input-item">
+                    <div class="input-label">电子产品</div>
+                    <input type="number" class="input-field" id="electronics" placeholder="0" min="0">
+                    <div class="input-unit">件/年</div>
+                </div>
+                <div class="input-item">
+                    <div class="input-label">日用品</div>
+                    <input type="number" class="input-field" id="dailyGoods" placeholder="0" min="0">
+                    <div class="input-unit">件/年</div>
+                </div>
+                <div class="input-item">
+                    <div class="input-label">快递包裹</div>
+                    <input type="number" class="input-field" id="packages" placeholder="0" min="0">
+                    <div class="input-unit">个/年</div>
+                </div>
+            </div>
+            <button class="submit-btn" onclick="calculateCarbon()">计算碳排放</button>
+        </div>
+
+        <!-- Calculation Result Table -->
+        <div class="calc-table" id="calcTable" style="display:none;">
+            <div class="calc-header">📊 碳排放明细</div>
+            <div id="calcRows"></div>
+        </div>
+
+        <!-- Info -->
+        <div class="info-box">
+            <div class="info-title">💡 计算说明</div>
+            <div class="info-text">
+                本计算器基于中国碳排放因子数据库和 IPCC 碳排放计算标准。
+                不同交通方式对应不同碳排放因子：汽油车约 2.3kg CO₂/L，
+                公交约 0.08kg CO₂/km，飞机约 0.1kg CO₂/km。
+                计算结果仅供参考，实际碳排放以权威机构认证为准。
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCategory = '';
+        let carbonData = {
+            transport: 0,
+            electricity: 0,
+            food: 0,
+            shopping: 0
+        };
+
+        function selectCategory(category) {
+            currentCategory = category;
+            document.getElementById('categoryGrid').style.display = 'none';
+            document.querySelectorAll('.input-section').forEach(el => el.classList.remove('show'));
+
+            const inputMap = {
+                'transport': 'transportInput',
+                'electricity': 'electricityInput',
+                'food': 'foodInput',
+                'shopping': 'shoppingInput'
+            };
+
+            document.getElementById(inputMap[category]).classList.add('show');
+        }
+
+        function showCategories() {
+            document.getElementById('categoryGrid').style.display = 'grid';
+            document.querySelectorAll('.input-section').forEach(el => el.classList.remove('show'));
+            document.getElementById('resultCard').classList.remove('show');
+            document.getElementById('calcTable').style.display = 'none';
+        }
+
+        function calculateCarbon() {
+            let total = 0;
+            let details = [];
+
+            if (currentCategory === 'transport') {
+                const carKm = parseFloat(document.getElementById('carKm').value) || 0;
+                const gasLiter = parseFloat(document.getElementById('gasLiter').value) || 0;
+                const busKm = parseFloat(document.getElementById('busKm').value) || 0;
+                const flightKm = parseFloat(document.getElementById('flightKm').value) || 0;
+
+                const carEmission = gasLiter * 2.3 + carKm * 0.2;
+                const busEmission = busKm * 0.08;
+                const flightEmission = flightKm * 0.1;
+
+                total = carEmission + busEmission + flightEmission;
+                carbonData.transport = total;
+
+                if (gasLiter > 0) details.push(`汽油消耗: ${gasLiter}L → ${carEmission.toFixed(1)}kg CO₂`);
+                if (busKm > 0) details.push(`公交出行: ${busKm}km → ${busEmission.toFixed(1)}kg CO₂`);
+                if (flightKm > 0) details.push(`飞机出行: ${flightKm}km → ${flightEmission.toFixed(1)}kg CO₂`);
+            }
+
+            else if (currentCategory === 'electricity') {
+                const elec = parseFloat(document.getElementById('electricity').value) || 0;
+                total = elec * 0.8;
+                carbonData.electricity = total;
+                if (elec > 0) details.push(`用电量: ${elec}kWh → ${total.toFixed(1)}kg CO₂`);
+            }
+
+            else if (currentCategory === 'food') {
+                const beef = parseFloat(document.getElementById('beef').value) || 0;
+                const pork = parseFloat(document.getElementById('pork').value) || 0;
+                const veg = parseFloat(document.getElementById('vegetables').value) || 0;
+                const takeout = parseFloat(document.getElementById('takeout').value) || 0;
+
+                total = beef * 27 + pork * 12 + veg * 2 + takeout * 1.5;
+                carbonData.food = total;
+
+                if (beef > 0) details.push(`牛肉: ${beef}kg → ${(beef * 27).toFixed(1)}kg CO₂`);
+                if (pork > 0) details.push(`猪肉: ${pork}kg → ${(pork * 12).toFixed(1)}kg CO₂`);
+                if (veg > 0) details.push(`蔬果: ${veg}kg → ${(veg * 2).toFixed(1)}kg CO₂`);
+                if (takeout > 0) details.push(`外卖: ${takeout}次 → ${(takeout * 1.5).toFixed(1)}kg CO₂`);
+            }
+
+            else if (currentCategory === 'shopping') {
+                const clothes = parseFloat(document.getElementById('clothes').value) || 0;
+                const elec = parseFloat(document.getElementById('electronics').value) || 0;
+                const daily = parseFloat(document.getElementById('dailyGoods').value) || 0;
+                const pkg = parseFloat(document.getElementById('packages').value) || 0;
+
+                total = clothes * 15 + elec * 50 + daily * 5 + pkg * 2;
+                carbonData.shopping = total;
+
+                if (clothes > 0) details.push(`衣服: ${clothes}件 → ${(clothes * 15).toFixed(1)}kg CO₂`);
+                if (elec > 0) details.push(`电子产品: ${elec}件 → ${(elec * 50).toFixed(1)}kg CO₂`);
+                if (daily > 0) details.push(`日用品: ${daily}件 → ${(daily * 5).toFixed(1)}kg CO₂`);
+                if (pkg > 0) details.push(`快递: ${pkg}个 → ${(pkg * 2).toFixed(1)}kg CO₂`);
+            }
+
+            // Show result
+            const totalAll = carbonData.transport + carbonData.electricity + carbonData.food + carbonData.shopping;
+
+            document.getElementById('resultCard').classList.add('show');
+            document.getElementById('totalCarbon').textContent = totalAll.toFixed(1);
+            document.getElementById('resultDetail').textContent = `相当于种植 ${Math.round(totalAll / 5)} 棵树来抵消 (每棵树年吸CO₂约5kg)`;
+
+            // Show table
+            const calcRows = document.getElementById('calcRows');
+            calcRows.innerHTML = '';
+
+            const categoryNames = {
+                'transport': '🚗 交通出行',
+                'electricity': '💡 家庭用电',
+                'food': '🍽️ 饮食消费',
+                'shopping': '🛒 购物消费'
+            };
+
+            for (const cat in carbonData) {
+                if (carbonData[cat] > 0) {
+                    const row = document.createElement('div');
+                    row.className = 'calc-row';
+                    row.innerHTML = `
+                        <span class="calc-label">${categoryNames[cat]}</span>
+                        <span class="calc-value">${carbonData[cat].toFixed(1)} kg CO₂</span>
+                    `;
+                    calcRows.appendChild(row);
+                }
+            }
+
+            document.getElementById('calcTable').style.display = 'block';
+
+            // Scroll to result
+            document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

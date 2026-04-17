@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBAM 合规报告 - CarbonPass</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00C853;
+            --primary-light: #00E676;
+            --primary-dark: #00A844;
+            --accent: #00B0FF;
+            --bg: #F5F7FA;
+            --card-bg: #FFFFFF;
+            --text-primary: #1A1A1A;
+            --text-secondary: #666666;
+            --text-hint: #999999;
+            --border: #E8ECF0;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.12);
+            --orange: #FF9800;
+            --red: #F44336;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+
+        /* Header */
+        .header {
+            background: var(--card-bg);
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-item {
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            background: var(--bg);
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        /* Main */
+        .main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        /* Progress Steps */
+        .steps {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 32px;
+            gap: 8px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--text-hint);
+            background: var(--card-bg);
+        }
+
+        .step.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .step.completed {
+            background: var(--bg);
+            color: var(--primary);
+        }
+
+        .step-num {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: currentColor;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .step.active .step-num {
+            background: white;
+            color: var(--primary);
+        }
+
+        .step.completed .step-num {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--bg);
+        }
+
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .section-title:nth-child(1) .section-icon {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        .form-group.full {
+            grid-column: span 2;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .form-label .required {
+            color: var(--red);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            color: var(--text-primary);
+            background: var(--bg);
+            transition: border-color 0.2s;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-hint);
+        }
+
+        select.form-input {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+        }
+
+        /* Result Card */
+        .result-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 20px;
+            padding: 32px;
+            color: white;
+            text-align: center;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .result-card.show {
+            display: block;
+        }
+
+        .result-section {
+            padding: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .result-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .result-title-icon {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        /* Emissions Summary */
+        .emissions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .emission-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .emission-label {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+
+        .emission-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .emission-unit {
+            font-size: 11px;
+            opacity: 0.7;
+        }
+
+        /* Certificate Info */
+        .cert-info {
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .cert-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .cert-row:not(:last-child) {
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Action Buttons */
+        .action-bar {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 200, 83, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        /* Download Links */
+        .download-links {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .download-link {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+            background: var(--card-bg);
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .download-link:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: linear-gradient(135deg, rgba(0, 200, 83, 0.05) 0%, rgba(0, 176, 255, 0.05) 100%);
+            border: 1px solid rgba(0, 200, 83, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .info-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .info-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* OCR Integration */
+        .ocr-section {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+
+        .ocr-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ocr-upload {
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ocr-upload:hover {
+            border-color: var(--primary);
+            background: rgba(0, 200, 83, 0.03);
+        }
+
+        .ocr-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .ocr-hint {
+            font-size: 12px;
+            color: var(--text-hint);
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full {
+                grid-column: span 1;
+            }
+            .emissions-grid {
+                grid-template-columns: 1fr;
+            }
+            .download-links {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <a href="/" class="logo">
+            <div class="logo-icon">🌱</div>
+            <div class="logo-text">碳迹<span>智识</span></div>
+        </a>
+        <div class="nav-menu">
+            <a href="/contact" class="nav-item">Contact Me</a>
+            <a href="/receipt" class="nav-item">票据识别</a>
+            <a href="/carbon" class="nav-item">碳足迹核算</a>
+            <a href="/cbam" class="nav-item active">CBAM报告</a>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+        <h1 class="page-title">📋 CBAM 合规报告生成</h1>
+        <p class="page-subtitle">基于欧盟 CBAM 规范，自动计算碳排放并生成合规 XML 报告</p>
+
+        <!-- Steps -->
+        <div class="steps">
+            <div class="step active">
+                <span class="step-num">1</span>
+                <span>企业信息</span>
+            </div>
+            <div class="step">
+                <span class="step-num">2</span>
+                <span>生产数据</span>
+            </div>
+            <div class="step">
+                <span class="step-num">3</span>
+                <span>排放数据</span>
+            </div>
+            <div class="step">
+                <span class="step-num">4</span>
+                <span>生成报告</span>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <form method="POST" action="/cbam" id="cbamForm">
+            <!-- Company Info Section -->
+            <div class="form-card">
+                <div class="section-title">
+                    <div class="section-icon">🏢</div>
+                    企业与设施信息
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">公司名称 <span class="required">*</span></label>
+                        <input type="text" name="company_name" class="form-input" placeholder="例如：Steel Malaysia Sdn Bhd" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">设施ID <span class="required">*</span></label>
+                        <input type="text" name="facility_id" class="form-input" placeholder="例如：MY-SM-2024-001" required>
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label">设施地址 <span class="required">*</span></label>
+                        <input type="text" name="facility_address" class="form-input" placeholder="完整地址，包含城市和州" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">联系人姓名</label>
+                        <input type="text" name="contact_person" class="form-input" placeholder="联系人姓名">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">联系人邮箱</label>
+                        <input type="email" name="contact_email" class="form-input" placeholder="email@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">报告期 <span class="required">*</span></label>
+                        <select name="reporting_period" class="form-input" required>
+                            <option value="2026-Q1">2026-Q1 (第一季度)</option>
+                            <option value="2026-Q2">2026-Q2 (第二季度)</option>
+                            <option value="2026-Q3">2026-Q3 (第三季度)</option>
+                            <option value="2026-Q4">2026-Q4 (第四季度)</option>
+                            <option value="2025-Q4">2025-Q4 (第四季度)</option>
+                            <option value="2025-Q3">2025-Q3 (第三季度)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">生产周期</label>
+                        <input type="text" name="production_period" class="form-input" placeholder="例如：2026-01-01 to 2026-03-31">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Production Data Section -->
+            <div class="form-card">
+                <div class="section-title">
+                    <div class="section-icon">🏭</div>
+                    生产数据
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">产品类型 <span class="required">*</span></label>
+                        <select name="product_type" class="form-input" required>
+                            <option value="">请选择产品类型</option>
+                            <option value="steel">钢铁 (Steel Products)</option>
+                            <option value="aluminum">铝 (Aluminum Products)</option>
+                            <option value="cement">水泥 (Cement)</option>
+                            <option value="fertilizer">化肥 (Fertilizer)</option>
+                            <option value="hydrogen">氢能 (Hydrogen)</option>
+                            <option value="electricity">电力 (Electricity)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">产品描述</label>
+                        <input type="text" name="product_description" class="form-input" placeholder="例如：Hot rolled steel coils">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">产量 <span class="required">*</span></label>
+                        <input type="number" name="quantity" class="form-input" placeholder="0" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">单位</label>
+                        <select name="unit" class="form-input">
+                            <option value="tonnes">吨 (tonnes)</option>
+                            <option value="MWh">兆瓦时 (MWh) - 电力</option>
+                            <option value="kg">千克 (kg)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- OCR Integration -->
+                <div class="ocr-section">
+                    <div class="ocr-title">
+                        <span>📷</span> 从票据自动提取数据
+                    </div>
+                    <div class="ocr-upload" onclick="document.getElementById('ocrInput').click()">
+                        <div class="ocr-icon">📄</div>
+                        <div>点击上传电费单或燃料发票</div>
+                        <div class="ocr-hint">支持 JPG、PNG、PDF，自动识别关键数据</div>
+                    </div>
+                    <input type="file" id="ocrInput" accept="image/*,.pdf" style="display:none;" onchange="alert('票据识别功能开发中，请手动填写数据')">
+                </div>
+            </div>
+
+            <!-- Emissions Data Section -->
+            <div class="form-card">
+                <div class="section-title">
+                    <div class="section-icon">💨</div>
+                    碳排放数据
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">用电量 (kWh)</label>
+                        <input type="number" name="electricity_kwh" class="form-input" placeholder="0" min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">柴油消耗 (升)</label>
+                        <input type="number" name="diesel_litres" class="form-input" placeholder="0" min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">天然气消耗 (立方米)</label>
+                        <input type="number" name="natural_gas_m3" class="form-input" placeholder="0" min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">LPG 消耗 (kg)</label>
+                        <input type="number" name="lpg_kg" class="form-input" placeholder="0" min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">煤炭消耗 (kg)</label>
+                        <input type="number" name="coal_kg" class="form-input" placeholder="0" min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">燃油消耗 (升)</label>
+                        <input type="number" name="fuel_oil_litres" class="form-input" placeholder="0" min="0" step="0.01">
+                    </div>
+                </div>
+
+                <div class="info-box" style="margin-top: 16px;">
+                    <div class="info-title">💡 排放因子说明</div>
+                    <div class="info-text">
+                        系统将使用马来西亚本地化排放因子计算：
+                        电网因子 0.7 kg CO₂/kWh（马来西亚能源委员会数据）+ IPCC AR6 燃料因子。
+                        若不填写数据，系统将使用 CBAM 默认值进行估算。
+                    </div>
+                </div>
+            </div>
+
+            <!-- EU Import Info -->
+            <div class="form-card">
+                <div class="section-title">
+                    <div class="section-icon">🌍</div>
+                    欧盟进口商信息
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">EU 进口商名称</label>
+                        <input type="text" name="eu_importer" class="form-input" placeholder="欧盟进口商公司名称">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">进口国</label>
+                        <select name="import_country" class="form-input">
+                            <option value="">请选择</option>
+                            <option value="DE">德国 (Germany)</option>
+                            <option value="FR">法国 (France)</option>
+                            <option value="NL">荷兰 (Netherlands)</option>
+                            <option value="IT">意大利 (Italy)</option>
+                            <option value="BE">比利时 (Belgium)</option>
+                            <option value="ES">西班牙 (Spain)</option>
+                            <option value="PL">波兰 (Poland)</option>
+                            <option value="AT">奥地利 (Austria)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">进口数量 (吨)</label>
+                        <input type="number" name="import_quantity" class="form-input" placeholder="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">EU ETS 碳价 (EUR/吨)</label>
+                        <input type="number" name="eu_carbon_price" class="form-input" placeholder="85" value="85" min="0">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="action-bar">
+                <button type="submit" class="btn btn-primary">
+                    <span>📊</span> 计算碳排放并生成报告
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                    <span>🔄</span> 重置
+                </button>
+            </div>
+        </form>
+
+        {% if result %}
+        <!-- Results Section -->
+        <div class="result-card show">
+            <div class="emissions-grid">
+                <div class="emission-item">
+                    <div class="emission-label">Scope 1 (直接排放)</div>
+                    <div class="emission-value">{{ result.scope1_kg }}</div>
+                    <div class="emission-unit">kg CO₂</div>
+                </div>
+                <div class="emission-item">
+                    <div class="emission-label">Scope 2 (电力)</div>
+                    <div class="emission-value">{{ result.scope2_kg }}</div>
+                    <div class="emission-unit">kg CO₂</div>
+                </div>
+                <div class="emission-item">
+                    <div class="emission-label">总隐含排放</div>
+                    <div class="emission-value">{{ result.total_kg }}</div>
+                    <div class="emission-unit">kg CO₂</div>
+                </div>
+            </div>
+
+            <div class="cert-info">
+                <div class="cert-row">
+                    <span>单位产品隐含排放</span>
+                    <span>{{ result.per_tonne }} kg CO₂/吨</span>
+                </div>
+                <div class="cert-row">
+                    <span>CBAM 证书需求</span>
+                    <span>{{ result.certificates_needed }} 个</span>
+                </div>
+                <div class="cert-row">
+                    <span>预计 CBAM 成本 (@ €{{ result.carbon_price }}/吨)</span>
+                    <span>€{{ result.cost_eur }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card result-section">
+            <div class="result-header">
+                <div class="result-title">
+                    <div class="result-title-icon">✓</div>
+                    报告已生成
+                </div>
+            </div>
+
+            <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 16px;">
+                您的 CBAM 合规报告已成功生成，可下载以下格式：
+            </p>
+
+            <div class="download-links">
+                <a href="{{ result.xml_path }}" class="download-link" download>
+                    <span>📄</span> 下载 CBAM XML 报告
+                </a>
+                {% if result.pdf_path %}
+                <a href="{{ result.pdf_path }}" class="download-link" download>
+                    <span>📑</span> 下载 PDF 报告
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Info -->
+        <div class="info-box">
+            <div class="info-title">⚠️ CBAM 重要提示</div>
+            <div class="info-text">
+                • 2026 年 1 月 1 日起，欧盟 CBAM 正式生效，进口商必须购买 CBAM 证书<br>
+                • 每吨 CO₂ 未缴证书将罚款 100 欧元<br>
+                • 2027 年 9 月 30 日前须提交 2026 年完整年度的 CBAM 申报<br>
+                • 本系统生成的 XML 报告可供欧盟进口商使用<br>
+                • 最终申报前需经第三方验证机构核实
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function resetForm() {
+            document.getElementById('cbamForm').reset();
+        }
+
+        // Form validation
+        document.getElementById('cbamForm').addEventListener('submit', function(e) {
+            const quantity = parseFloat(document.querySelector('[name="quantity"]').value);
+            if (!quantity || quantity <= 0) {
+                e.preventDefault();
+                alert('请输入有效的产量数值');
+            }
+        });
+    </script>
+</body>
+</html>
