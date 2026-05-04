@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Me - 碳迹智识</title>
+    <title>Contact - CarbonPass</title>
     <style>
         * {
             margin: 0;
@@ -357,28 +357,28 @@
 
     <!-- Header -->
     <div class="header">
-        <a href="/" class="logo">
+        <a href="/?lang=en" class="logo">
             <div class="logo-icon">🌱</div>
-            <div class="logo-text">碳迹<span>智识</span></div>
+            <div class="logo-text">Carbon<span>Pass</span></div>
         </a>
         <div class="nav-menu">
-            <a href="/contact" class="nav-item active">Contact Me</a>
-            <a href="/receipt" class="nav-item">票据识别</a>
-            <a href="/carbon" class="nav-item">碳足迹核算</a>
+            <a href="/contact?lang=en" class="nav-item active">Contact</a>
+            <a href="/receipt?lang=en" class="nav-item">Receipt OCR</a>
+            <a href="/carbon?lang=en" class="nav-item">Carbon Footprint</a>
         </div>
     </div>
 
     <!-- Main -->
     <div class="main">
-        <h1 class="page-title">📧 Contact Me</h1>
-        <p class="page-subtitle">期待与您的交流与合作</p>
+        <h1 class="page-title">📧 Contact Us</h1>
+        <p class="page-subtitle">We look forward to hearing from you</p>
 
         <!-- Contact Info -->
         <div class="contact-card">
             <div class="contact-item">
                 <div class="contact-icon">📧</div>
                 <div class="contact-content">
-                    <div class="contact-label">电子邮件</div>
+                    <div class="contact-label">Email</div>
                     <div class="contact-value">
                         <a href="mailto:contact@carbon.tech">contact@carbon.tech</a>
                     </div>
@@ -388,7 +388,7 @@
             <div class="contact-item">
                 <div class="contact-icon">🌐</div>
                 <div class="contact-content">
-                    <div class="contact-label">官方网站</div>
+                    <div class="contact-label">Website</div>
                     <div class="contact-value">
                         <a href="#">www.carbon-tech.cn</a>
                     </div>
@@ -398,46 +398,46 @@
             <div class="contact-item">
                 <div class="contact-icon">💬</div>
                 <div class="contact-content">
-                    <div class="contact-label">微信二维码</div>
-                    <div class="contact-value">请扫描下方二维码</div>
+                    <div class="contact-label">WeChat QR Code</div>
+                    <div class="contact-value">Please scan the QR code below</div>
                 </div>
             </div>
         </div>
 
         <!-- Contact Form -->
         <div class="form-card">
-            <div class="form-title">✉️ 发送消息</div>
+            <div class="form-title">✉️ Send Message</div>
 
             <div id="formContent">
                 <div class="form-group">
-                    <label class="form-label">您的姓名</label>
-                    <input type="text" class="form-input" id="nameInput" placeholder="请输入您的姓名">
+                    <label class="form-label">Your Name</label>
+                    <input type="text" class="form-input" id="nameInput" placeholder="Enter your name">
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">电子邮箱</label>
+                    <label class="form-label">Email Address</label>
                     <input type="email" class="form-input" id="emailInput" placeholder="example@email.com">
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">留言内容</label>
-                    <textarea class="form-input" id="messageInput" placeholder="请输入您的留言或建议..."></textarea>
+                    <label class="form-label">Message</label>
+                    <textarea class="form-input" id="messageInput" placeholder="Enter your message or suggestions..."></textarea>
                 </div>
 
-                <button class="submit-btn" onclick="submitForm()">发送消息</button>
+                <button class="submit-btn" onclick="submitForm()">Send Message</button>
             </div>
 
             <div class="success-msg" id="successMsg">
                 <div class="success-icon">✓</div>
-                <div class="success-title">消息已发送</div>
-                <div class="success-text">感谢您的留言，我们会尽快回复您</div>
+                <div class="success-title">Message Sent</div>
+                <div class="success-text">Thank you for your message, we will reply as soon as possible</div>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
     <div class="footer">
-        碳迹智识 · 2024 · <span>双碳政策</span>下的智能碳管理平台
+        CarbonPass · 2024 · <span>Carbon Neutrality</span> Smart Carbon Management Platform
     </div>
 
     <script>
@@ -447,13 +447,13 @@
             const message = document.getElementById('messageInput').value.trim();
 
             if (!name || !email || !message) {
-                alert('请填写完整信息');
+                alert('Please fill in all fields');
                 return;
             }
 
             // Simple email validation
             if (!email.includes('@') || !email.includes('.')) {
-                alert('请输入有效的电子邮箱');
+                alert('Please enter a valid email address');
                 return;
             }
 

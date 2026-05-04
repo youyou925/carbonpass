@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>碳足迹核算 - 碳迹智识</title>
+    <title>Carbon Footprint - CarbonPass</title>
     <style>
         * {
             margin: 0;
@@ -23,6 +23,7 @@
             --text-hint: #999999;
             --border: #E8ECF0;
             --shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.12);
             --orange: #FF9800;
             --orange-light: #FFB74D;
         }
@@ -433,29 +434,29 @@
 
     <!-- Header -->
     <div class="header">
-        <a href="/" class="logo">
+        <a href="/?lang=en" class="logo">
             <div class="logo-icon">🌱</div>
-            <div class="logo-text">碳迹<span>智识</span></div>
+            <div class="logo-text">Carbon<span>Pass</span></div>
         </a>
         <div class="nav-menu">
-            <a href="/contact" class="nav-item">Contact Me</a>
-            <a href="/receipt" class="nav-item">票据识别</a>
-            <a href="/carbon" class="nav-item active">碳足迹核算</a>
+            <a href="/contact?lang=en" class="nav-item">Contact</a>
+            <a href="/receipt?lang=en" class="nav-item">Receipt OCR</a>
+            <a href="/carbon?lang=en" class="nav-item active">Carbon Footprint</a>
         </div>
     </div>
 
     <!-- Main -->
     <div class="main">
-        <h1 class="page-title">🌿 碳足迹核算</h1>
-        <p class="page-subtitle">选择您的消费场景，计算对应的碳排放量</p>
+        <h1 class="page-title">🌿 Carbon Footprint Calculator</h1>
+        <p class="page-subtitle">Select your consumption scenario to calculate carbon emissions</p>
 
         <!-- Result Card -->
         <div class="result-card" id="resultCard">
-            <div class="result-label">您的碳足迹总量</div>
+            <div class="result-label">Your Total Carbon Footprint</div>
             <div class="result-value" id="totalCarbon">0</div>
-            <div class="result-unit">千克 CO₂</div>
+            <div class="result-unit">kg CO₂</div>
             <div class="result-detail" id="resultDetail">
-                相当于种植 0 棵树来抵消
+                Equivalent to planting 0 trees to offset
             </div>
         </div>
 
@@ -463,152 +464,152 @@
         <div class="category-grid" id="categoryGrid">
             <div class="category-card" onclick="selectCategory('transport')">
                 <div class="category-icon">🚗</div>
-                <div class="category-name">交通出行</div>
-                <div class="category-hint">汽油车、电动车、公交、飞机</div>
+                <div class="category-name">Transportation</div>
+                <div class="category-hint">Car, EV, Bus, Plane</div>
             </div>
 
             <div class="category-card" onclick="selectCategory('electricity')">
                 <div class="category-icon">💡</div>
-                <div class="category-name">家庭用电</div>
-                <div class="category-hint">电费账单、峰谷用电</div>
+                <div class="category-name">Home Electricity</div>
+                <div class="category-hint">Electricity bill, usage</div>
             </div>
 
             <div class="category-card" onclick="selectCategory('food')">
                 <div class="category-icon">🍽️</div>
-                <div class="category-name">饮食消费</div>
-                <div class="category-hint">肉类、蔬菜、外卖、零食</div>
+                <div class="category-name">Food Consumption</div>
+                <div class="category-hint">Meat, Vegetables, Takeout</div>
             </div>
 
             <div class="category-card" onclick="selectCategory('shopping')">
                 <div class="category-icon">🛒</div>
-                <div class="category-name">购物消费</div>
-                <div class="category-hint">衣服、电子产品、日用品</div>
+                <div class="category-name">Shopping</div>
+                <div class="category-hint">Clothes, Electronics, Daily goods</div>
             </div>
         </div>
 
         <!-- Transport Input -->
         <div class="input-section" id="transportInput">
             <div class="input-header">
-                <div class="input-title">🚗 交通出行碳排放</div>
-                <span class="back-btn" onclick="showCategories()">← 返回</span>
+                <div class="input-title">🚗 Transportation Carbon Emissions</div>
+                <span class="back-btn" onclick="showCategories()">← Back</span>
             </div>
             <div class="input-grid">
                 <div class="input-item">
-                    <div class="input-label">汽油车行驶里程</div>
+                    <div class="input-label">Car distance</div>
                     <input type="number" class="input-field" id="carKm" placeholder="0" min="0">
-                    <div class="input-unit">公里</div>
+                    <div class="input-unit">km</div>
                 </div>
                 <div class="input-item">
-                    <div class="input-label">汽油消耗量</div>
+                    <div class="input-label">Gasoline consumption</div>
                     <input type="number" class="input-field" id="gasLiter" placeholder="0" min="0">
-                    <div class="input-unit">升</div>
+                    <div class="input-unit">liters</div>
                 </div>
                 <div class="input-item">
-                    <div class="input-label">公共交通里程</div>
+                    <div class="input-label">Public transit distance</div>
                     <input type="number" class="input-field" id="busKm" placeholder="0" min="0">
-                    <div class="input-unit">公里</div>
+                    <div class="input-unit">km</div>
                 </div>
                 <div class="input-item">
-                    <div class="input-label">飞机里程</div>
+                    <div class="input-label">Flight distance</div>
                     <input type="number" class="input-field" id="flightKm" placeholder="0" min="0">
-                    <div class="input-unit">公里</div>
+                    <div class="input-unit">km</div>
                 </div>
             </div>
-            <button class="submit-btn" onclick="calculateCarbon()">计算碳排放</button>
+            <button class="submit-btn" onclick="calculateCarbon()">Calculate Carbon</button>
         </div>
 
         <!-- Electricity Input -->
         <div class="input-section" id="electricityInput">
             <div class="input-header">
-                <div class="input-title">💡 家庭用电碳排放</div>
-                <span class="back-btn" onclick="showCategories()">← 返回</span>
+                <div class="input-title">💡 Home Electricity Carbon Emissions</div>
+                <span class="back-btn" onclick="showCategories()">← Back</span>
             </div>
             <div class="input-grid">
                 <div class="input-item">
-                    <div class="input-label">月用电量</div>
+                    <div class="input-label">Monthly electricity</div>
                     <input type="number" class="input-field" id="electricity" placeholder="0" min="0">
-                    <div class="input-unit">千瓦时 (kWh)</div>
+                    <div class="input-unit">kWh</div>
                 </div>
             </div>
-            <button class="submit-btn" onclick="calculateCarbon()">计算碳排放</button>
+            <button class="submit-btn" onclick="calculateCarbon()">Calculate Carbon</button>
         </div>
 
         <!-- Food Input -->
         <div class="input-section" id="foodInput">
             <div class="input-header">
-                <div class="input-title">🍽️ 饮食消费碳排放</div>
-                <span class="back-btn" onclick="showCategories()">← 返回</span>
+                <div class="input-title">🍽️ Food Consumption Carbon Emissions</div>
+                <span class="back-btn" onclick="showCategories()">← Back</span>
             </div>
             <div class="input-grid">
                 <div class="input-item">
-                    <div class="input-label">牛肉消费</div>
+                    <div class="input-label">Beef consumption</div>
                     <input type="number" class="input-field" id="beef" placeholder="0" min="0">
-                    <div class="input-unit">公斤/月</div>
+                    <div class="input-unit">kg/month</div>
                 </div>
                 <div class="input-item">
-                    <div class="input-label">猪肉消费</div>
+                    <div class="input-label">Pork consumption</div>
                     <input type="number" class="input-field" id="pork" placeholder="0" min="0">
-                    <div class="input-unit">公斤/月</div>
+                    <div class="input-unit">kg/month</div>
                 </div>
                 <div class="input-item">
-                    <div class="input-label">蔬菜水果</div>
+                    <div class="input-label">Vegetables & Fruits</div>
                     <input type="number" class="input-field" id="vegetables" placeholder="0" min="0">
-                    <div class="input-unit">公斤/月</div>
+                    <div class="input-unit">kg/month</div>
                 </div>
                 <div class="input-item">
-                    <div class="input-label">外卖次数</div>
+                    <div class="input-label">Takeout orders</div>
                     <input type="number" class="input-field" id="takeout" placeholder="0" min="0">
-                    <div class="input-unit">次/月</div>
+                    <div class="input-unit">times/month</div>
                 </div>
             </div>
-            <button class="submit-btn" onclick="calculateCarbon()">计算碳排放</button>
+            <button class="submit-btn" onclick="calculateCarbon()">Calculate Carbon</button>
         </div>
 
         <!-- Shopping Input -->
         <div class="input-section" id="shoppingInput">
             <div class="input-header">
-                <div class="input-title">🛒 购物消费碳排放</div>
-                <span class="back-btn" onclick="showCategories()">← 返回</span>
+                <div class="input-title">🛒 Shopping Carbon Emissions</div>
+                <span class="back-btn" onclick="showCategories()">← Back</span>
             </div>
             <div class="input-grid">
                 <div class="input-item">
-                    <div class="input-label">衣服购买</div>
+                    <div class="input-label">Clothes purchase</div>
                     <input type="number" class="input-field" id="clothes" placeholder="0" min="0">
-                    <div class="input-unit">件/年</div>
+                    <div class="input-unit">items/year</div>
                 </div>
                 <div class="input-item">
-                    <div class="input-label">电子产品</div>
+                    <div class="input-label">Electronics</div>
                     <input type="number" class="input-field" id="electronics" placeholder="0" min="0">
-                    <div class="input-unit">件/年</div>
+                    <div class="input-unit">items/year</div>
                 </div>
                 <div class="input-item">
-                    <div class="input-label">日用品</div>
+                    <div class="input-label">Daily goods</div>
                     <input type="number" class="input-field" id="dailyGoods" placeholder="0" min="0">
-                    <div class="input-unit">件/年</div>
+                    <div class="input-unit">items/year</div>
                 </div>
                 <div class="input-item">
-                    <div class="input-label">快递包裹</div>
+                    <div class="input-label">Express packages</div>
                     <input type="number" class="input-field" id="packages" placeholder="0" min="0">
-                    <div class="input-unit">个/年</div>
+                    <div class="input-unit">packages/year</div>
                 </div>
             </div>
-            <button class="submit-btn" onclick="calculateCarbon()">计算碳排放</button>
+            <button class="submit-btn" onclick="calculateCarbon()">Calculate Carbon</button>
         </div>
 
         <!-- Calculation Result Table -->
         <div class="calc-table" id="calcTable" style="display:none;">
-            <div class="calc-header">📊 碳排放明细</div>
+            <div class="calc-header">📊 Carbon Emission Details</div>
             <div id="calcRows"></div>
         </div>
 
         <!-- Info -->
         <div class="info-box">
-            <div class="info-title">💡 计算说明</div>
+            <div class="info-title">💡 Calculation Notes</div>
             <div class="info-text">
-                本计算器基于中国碳排放因子数据库和 IPCC 碳排放计算标准。
-                不同交通方式对应不同碳排放因子：汽油车约 2.3kg CO₂/L，
-                公交约 0.08kg CO₂/km，飞机约 0.1kg CO₂/km。
-                计算结果仅供参考，实际碳排放以权威机构认证为准。
+                This calculator is based on Chinese carbon emission factor database and IPCC carbon emission calculation standards.
+                Different transportation modes correspond to different carbon emission factors: gasoline cars approximately 2.3kg CO₂/L,
+                buses approximately 0.08kg CO₂/km, planes approximately 0.1kg CO₂/km.
+                Calculation results are for reference only, actual carbon emissions are subject to certification by authoritative institutions.
             </div>
         </div>
     </div>
@@ -661,16 +662,16 @@
                 total = carEmission + busEmission + flightEmission;
                 carbonData.transport = total;
 
-                if (gasLiter > 0) details.push(`汽油消耗: ${gasLiter}L → ${carEmission.toFixed(1)}kg CO₂`);
-                if (busKm > 0) details.push(`公交出行: ${busKm}km → ${busEmission.toFixed(1)}kg CO₂`);
-                if (flightKm > 0) details.push(`飞机出行: ${flightKm}km → ${flightEmission.toFixed(1)}kg CO₂`);
+                if (gasLiter > 0) details.push(`Gasoline: ${gasLiter}L → ${carEmission.toFixed(1)}kg CO₂`);
+                if (busKm > 0) details.push(`Bus: ${busKm}km → ${busEmission.toFixed(1)}kg CO₂`);
+                if (flightKm > 0) details.push(`Flight: ${flightKm}km → ${flightEmission.toFixed(1)}kg CO₂`);
             }
 
             else if (currentCategory === 'electricity') {
                 const elec = parseFloat(document.getElementById('electricity').value) || 0;
                 total = elec * 0.8;
                 carbonData.electricity = total;
-                if (elec > 0) details.push(`用电量: ${elec}kWh → ${total.toFixed(1)}kg CO₂`);
+                if (elec > 0) details.push(`Electricity: ${elec}kWh → ${total.toFixed(1)}kg CO₂`);
             }
 
             else if (currentCategory === 'food') {
@@ -682,10 +683,10 @@
                 total = beef * 27 + pork * 12 + veg * 2 + takeout * 1.5;
                 carbonData.food = total;
 
-                if (beef > 0) details.push(`牛肉: ${beef}kg → ${(beef * 27).toFixed(1)}kg CO₂`);
-                if (pork > 0) details.push(`猪肉: ${pork}kg → ${(pork * 12).toFixed(1)}kg CO₂`);
-                if (veg > 0) details.push(`蔬果: ${veg}kg → ${(veg * 2).toFixed(1)}kg CO₂`);
-                if (takeout > 0) details.push(`外卖: ${takeout}次 → ${(takeout * 1.5).toFixed(1)}kg CO₂`);
+                if (beef > 0) details.push(`Beef: ${beef}kg → ${(beef * 27).toFixed(1)}kg CO₂`);
+                if (pork > 0) details.push(`Pork: ${pork}kg → ${(pork * 12).toFixed(1)}kg CO₂`);
+                if (veg > 0) details.push(`Vegetables: ${veg}kg → ${(veg * 2).toFixed(1)}kg CO₂`);
+                if (takeout > 0) details.push(`Takeout: ${takeout} → ${(takeout * 1.5).toFixed(1)}kg CO₂`);
             }
 
             else if (currentCategory === 'shopping') {
@@ -697,10 +698,10 @@
                 total = clothes * 15 + elec * 50 + daily * 5 + pkg * 2;
                 carbonData.shopping = total;
 
-                if (clothes > 0) details.push(`衣服: ${clothes}件 → ${(clothes * 15).toFixed(1)}kg CO₂`);
-                if (elec > 0) details.push(`电子产品: ${elec}件 → ${(elec * 50).toFixed(1)}kg CO₂`);
-                if (daily > 0) details.push(`日用品: ${daily}件 → ${(daily * 5).toFixed(1)}kg CO₂`);
-                if (pkg > 0) details.push(`快递: ${pkg}个 → ${(pkg * 2).toFixed(1)}kg CO₂`);
+                if (clothes > 0) details.push(`Clothes: ${clothes} → ${(clothes * 15).toFixed(1)}kg CO₂`);
+                if (elec > 0) details.push(`Electronics: ${elec} → ${(elec * 50).toFixed(1)}kg CO₂`);
+                if (daily > 0) details.push(`Daily goods: ${daily} → ${(daily * 5).toFixed(1)}kg CO₂`);
+                if (pkg > 0) details.push(`Packages: ${pkg} → ${(pkg * 2).toFixed(1)}kg CO₂`);
             }
 
             // Show result
@@ -708,17 +709,17 @@
 
             document.getElementById('resultCard').classList.add('show');
             document.getElementById('totalCarbon').textContent = totalAll.toFixed(1);
-            document.getElementById('resultDetail').textContent = `相当于种植 ${Math.round(totalAll / 5)} 棵树来抵消 (每棵树年吸CO₂约5kg)`;
+            document.getElementById('resultDetail').textContent = `Equivalent to planting ${Math.round(totalAll / 5)} trees to offset (each tree absorbs approximately 5kg CO₂ per year)`;
 
             // Show table
             const calcRows = document.getElementById('calcRows');
             calcRows.innerHTML = '';
 
             const categoryNames = {
-                'transport': '🚗 交通出行',
-                'electricity': '💡 家庭用电',
-                'food': '🍽️ 饮食消费',
-                'shopping': '🛒 购物消费'
+                'transport': '🚗 Transportation',
+                'electricity': '💡 Home Electricity',
+                'food': '🍽️ Food Consumption',
+                'shopping': '🛒 Shopping'
             };
 
             for (const cat in carbonData) {

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if lang == 'zh' %}管理后台 - CarbonPass{% else %}Admin - CarbonPass{% endif %}</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root { --primary:#0B4D3E; --primary-dark:#083A2E; --accent:#14B8A6; --bg:#F5F7F2; --card-bg:#FFF; --text-primary:#1E293B; --text-secondary:#64748B; --border:#E2E8F0; --radius:8px; --shadow:0 1px 3px rgba(0,0,0,0.1); }
+        body { font-family:'Inter',-apple-system,'Microsoft YaHei',sans-serif; background:var(--bg); color:var(--text-primary); }
+        .topbar { background:var(--card-bg); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); }
+        .logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+        .logo-icon { width:32px; height:32px; background:linear-gradient(135deg,var(--primary),var(--accent)); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:14px; }
+        .logo-text { font-size:16px; font-weight:700; }
+        .logo-text span { color:var(--primary); }
+        .nav { display:flex; gap:4px; }
+        .nav a { padding:8px 14px; border-radius:var(--radius); text-decoration:none; color:var(--text-secondary); font-size:13px; }
+        .nav a:hover,.nav a.active { background:var(--bg); color:var(--primary); }
+        .main { max-width:900px; margin:0 auto; padding:24px; }
+        .page-title { font-size:20px; font-weight:700; margin-bottom:20px; }
+        .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+        .stat-card { background:var(--card-bg); border-radius:12px; padding:24px; box-shadow:var(--shadow); text-align:center; }
+        .stat-card h3 { font-size:32px; font-weight:700; color:var(--primary); }
+        .stat-card p { font-size:12px; color:var(--text-secondary); margin-top:4px; }
+        .quick-links { background:var(--card-bg); border-radius:12px; padding:24px; box-shadow:var(--shadow); }
+        .quick-links h2 { font-size:14px; font-weight:600; margin-bottom:16px; }
+        .links-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; }
+        .links-grid a { display:block; padding:16px; background:var(--bg); border-radius:var(--radius); text-decoration:none; color:var(--text-primary); font-weight:500; font-size:14px; text-align:center; }
+        .links-grid a:hover { background:var(--primary); color:white; }
+        @media (max-width:640px) { .stats-grid { grid-template-columns:repeat(2,1fr); } }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="/dashboard" class="logo"><div class="logo-icon">C</div><div class="logo-text">Carbon<span>Pass</span></div></a>
+        <div style="display:flex; gap:12px; align-items:center;">
+            <span style="font-size:13px; color:var(--text-secondary);">{% if lang == 'zh' %}管理员{% else %}Admin{% endif %}</span>
+            <a href="/dashboard" style="font-size:13px; color:var(--primary); text-decoration:none;">← {% if lang == 'zh' %}返回{% else %}Back{% endif %}</a>
+        </div>
+    </div>
+    <div class="main">
+        <h1 class="page-title">{% if lang == 'zh' %}管理后台{% else %}Admin Dashboard{% endif %}</h1>
+
+        <div class="stats-grid">
+            <div class="stat-card"><h3>{{ user_count }}</h3><p>{% if lang == 'zh' %}注册用户{% else %}Users{% endif %}</p></div>
+            <div class="stat-card"><h3>{{ company_count }}</h3><p>{% if lang == 'zh' %}注册企业{% else %}Companies{% endif %}</p></div>
+            <div class="stat-card"><h3>{{ period_count }}</h3><p>{% if lang == 'zh' %}填报周期{% else %}Periods{% endif %}</p></div>
+            <div class="stat-card"><h3>{{ report_count }}</h3><p>{% if lang == 'zh' %}生成报告{% else %}Reports{% endif %}</p></div>
+        </div>
+
+        <div class="quick-links">
+            <h2>{% if lang == 'zh' %}快捷管理{% else %}Quick Management{% endif %}</h2>
+            <div class="links-grid">
+                <a href="/admin/users">{% if lang == 'zh' %}👥 用户管理{% else %}👥 Users{% endif %}</a>
+                <a href="/admin/periods">{% if lang == 'zh' %}📋 填报记录{% else %}📋 Periods{% endif %}</a>
+                <a href="/admin/factors">{% if lang == 'zh' %}🔬 排放因子{% else %}🔬 Factors{% endif %}</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

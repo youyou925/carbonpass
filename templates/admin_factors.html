@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if lang == 'zh' %}排放因子管理 - CarbonPass{% else %}Emission Factors - CarbonPass{% endif %}</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root { --primary:#0B4D3E; --primary-dark:#083A2E; --accent:#14B8A6; --bg:#F5F7F2; --card-bg:#FFF; --text-primary:#1E293B; --text-secondary:#64748B; --border:#E2E8F0; --radius:8px; --shadow:0 1px 3px rgba(0,0,0,0.1); }
+        body { font-family:'Inter',-apple-system,'Microsoft YaHei',sans-serif; background:var(--bg); color:var(--text-primary); }
+        .topbar { background:var(--card-bg); padding:12px 24px; display:flex; align-items:center; border-bottom:1px solid var(--border); }
+        .logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+        .logo-icon { width:32px; height:32px; background:linear-gradient(135deg,var(--primary),var(--accent)); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:14px; }
+        .logo-text { font-size:16px; font-weight:700; }
+        .logo-text span { color:var(--primary); }
+        .main { max-width:1000px; margin:0 auto; padding:24px; }
+        .page-title { font-size:20px; font-weight:700; margin-bottom:4px; }
+        .page-desc { font-size:13px; color:var(--text-secondary); margin-bottom:20px; }
+        .card { background:var(--card-bg); border-radius:12px; box-shadow:var(--shadow); padding:24px; margin-bottom:24px; }
+        .card-title { font-size:15px; font-weight:600; margin-bottom:16px; }
+        .form-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
+        .form-group { }
+        .form-label { font-size:11px; color:var(--text-secondary); margin-bottom:4px; display:block; }
+        .form-input { width:100%; padding:8px 10px; border:1.5px solid var(--border); border-radius:6px; font-size:13px; background:var(--card-bg); outline:none; }
+        .form-input:focus { border-color:var(--primary); }
+        .btn { padding:8px 20px; border-radius:var(--radius); font-size:13px; font-weight:600; cursor:pointer; border:none; }
+        .btn-primary { background:var(--primary); color:white; }
+        .btn-primary:hover { background:var(--primary-dark); }
+        .btn-small { padding:4px 10px; font-size:11px; border-radius:6px; background:#FEF2F2; color:#DC2626; border:none; cursor:pointer; }
+        .btn-small:hover { background:#DC2626; color:white; }
+        table { width:100%; border-collapse:collapse; font-size:13px; }
+        th { text-align:left; padding:10px 12px; background:var(--bg); font-weight:600; font-size:11px; color:var(--text-secondary); }
+        td { padding:8px 12px; border-bottom:1px solid var(--border); }
+        tr:hover td { background:#FAFAFA; }
+        .flash { padding:10px 14px; border-radius:var(--radius); margin-bottom:16px; font-size:13px; }
+        .flash.success { background:#F0FDF4; color:#16A34A; border:1px solid #BBF7D0; }
+        .flash.error { background:#FEF2F2; color:#DC2626; border:1px solid #FECACA; }
+        .back-link { display:inline-block; margin-bottom:16px; font-size:13px; color:var(--primary); text-decoration:none; }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="/dashboard" class="logo"><div class="logo-icon">C</div><div class="logo-text">Carbon<span>Pass</span></div></a>
+        <span style="font-size:13px; color:var(--text-secondary); margin-left:auto;">{% if lang == 'zh' %}管理员{% else %}Admin{% endif %}</span>
+    </div>
+    <div class="main">
+        <a href="/admin" class="back-link">← {% if lang == 'zh' %}返回管理后台{% else %}Back to Admin{% endif %}</a>
+        <h1 class="page-title">{% if lang == 'zh' %}排放因子管理{% else %}Emission Factor Management{% endif %}</h1>
+        <p class="page-desc">{% if lang == 'zh' %}管理 IPCC / Suruhanjaya Tenaga 排放因子数据库{% else %}Manage IPCC / Suruhanjaya Tenaga emission factor database{% endif %}</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}{% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}{% endif %}
+        {% endwith %}
+
+        <!-- Add Factor Form -->
+        <div class="card">
+            <div class="card-title">{% if lang == 'zh' %}➕ 添加排放因子{% else %}➕ Add Emission Factor{% endif %}</div>
+            <form method="POST">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">{% if lang == 'zh' %}类别{% else %}Category{% endif %}</label>
+                        <select name="category" class="form-input" required>
+                            <option value="fuel">{% if lang == 'zh' %}燃料{% else %}Fuel{% endif %}</option>
+                            <option value="grid">{% if lang == 'zh' %}电网{% else %}Grid{% endif %}</option>
+                            <option value="other">{% if lang == 'zh' %}其他{% else %}Other{% endif %}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{% if lang == 'zh' %}子类别{% else %}Subcategory{% endif %}</label>
+                        <input type="text" name="subcategory" class="form-input" placeholder="e.g. diesel, peninsular" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{% if lang == 'zh' %}因子值{% else %}Factor{% endif %}</label>
+                        <input type="number" name="factor" class="form-input" step="0.00000001" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{% if lang == 'zh' %}单位{% else %}Unit{% endif %}</label>
+                        <input type="text" name="unit" class="form-input" placeholder="kg CO₂/L" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{% if lang == 'zh' %}来源{% else %}Source{% endif %}</label>
+                        <input type="text" name="source" class="form-input" placeholder="IPCC AR6">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{% if lang == 'zh' %}年份{% else %}Year{% endif %}</label>
+                        <input type="number" name="year" class="form-input" value="2024">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top:16px;">{% if lang == 'zh' %}添加{% else %}Add{% endif %}</button>
+            </form>
+        </div>
+
+        <!-- Factors Table -->
+        <div class="card" style="padding:0; overflow-x:auto;">
+            <table>
+                <tr><th>ID</th><th>{% if lang == 'zh' %}类别{% else %}Category{% endif %}</th><th>{% if lang == 'zh' %}子类别{% else %}Subcategory{% endif %}</th><th>{% if lang == 'zh' %}因子值{% else %}Factor{% endif %}</th><th>{% if lang == 'zh' %}单位{% else %}Unit{% endif %}</th><th>{% if lang == 'zh' %}来源{% else %}Source{% endif %}</th><th>{% if lang == 'zh' %}年份{% else %}Year{% endif %}</th><th>{% if lang == 'zh' %}操作{% else %}Actions{% endif %}</th></tr>
+                {% for f in factors %}
+                <tr>
+                    <td>{{ f.id }}</td>
+                    <td><span class="badge">{{ f.category }}</span></td>
+                    <td>{{ f.subcategory }}</td>
+                    <td><code>{{ f.factor }}</code></td>
+                    <td>{{ f.unit }}</td>
+                    <td>{{ f.source or '—' }}</td>
+                    <td>{{ f.year or '—' }}</td>
+                    <td>
+                        <form method="POST" action="/admin/factors/{{ f.id }}/delete" style="display:inline;" onsubmit="return confirm('{% if lang == 'zh' %}确认删除？{% else %}Delete this factor?{% endif %}')">
+                            <button type="submit" class="btn-small">{% if lang == 'zh' %}删除{% else %}Delete{% endif %}</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="8" style="text-align:center;padding:24px;color:var(--text-hint);">{% if lang == 'zh' %}暂无排放因子数据{% else %}No emission factors found{% endif %}</td></tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</body>
+</html>

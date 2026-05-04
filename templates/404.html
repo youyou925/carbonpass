@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - CarbonPass</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root { --primary:#0B4D3E; --accent:#14B8A6; --bg:#F5F7F2; --text-primary:#1E293B; --text-secondary:#64748B; }
+        body { font-family:'Inter',-apple-system,'Microsoft YaHei',sans-serif; background:var(--bg); color:var(--text-primary); display:flex; align-items:center; justify-content:center; min-height:100vh; }
+        .box { text-align:center; }
+        .code { font-size:80px; font-weight:700; color:var(--primary); line-height:1; }
+        .msg { font-size:18px; margin:16px 0 24px; color:var(--text-secondary); }
+        .btn { display:inline-block; padding:12px 24px; background:var(--primary); color:white; border-radius:8px; text-decoration:none; font-weight:600; }
+        .btn:hover { opacity:0.9; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div class="code">404</div>
+        <div class="msg">{% if lang == 'zh' %}页面未找到{% else %}Page not found{% endif %}</div>
+        <a href="/" class="btn">{% if lang == 'zh' %}返回首页{% else %}Go Home{% endif %}</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if lang == 'zh' %}用户管理 - CarbonPass{% else %}User Management - CarbonPass{% endif %}</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root { --primary:#0B4D3E; --primary-dark:#083A2E; --accent:#14B8A6; --bg:#F5F7F2; --card-bg:#FFF; --text-primary:#1E293B; --text-secondary:#64748B; --border:#E2E8F0; --radius:8px; --shadow:0 1px 3px rgba(0,0,0,0.1); }
+        body { font-family:'Inter',-apple-system,'Microsoft YaHei',sans-serif; background:var(--bg); color:var(--text-primary); }
+        .topbar { background:var(--card-bg); padding:12px 24px; display:flex; align-items:center; border-bottom:1px solid var(--border); }
+        .logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+        .logo-icon { width:32px; height:32px; background:linear-gradient(135deg,var(--primary),var(--accent)); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:14px; }
+        .logo-text { font-size:16px; font-weight:700; }
+        .logo-text span { color:var(--primary); }
+        .main { max-width:1000px; margin:0 auto; padding:24px; }
+        .page-title { font-size:20px; font-weight:700; margin-bottom:4px; }
+        .page-desc { font-size:13px; color:var(--text-secondary); margin-bottom:20px; }
+        .card { background:var(--card-bg); border-radius:12px; box-shadow:var(--shadow); overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; font-size:13px; }
+        th { text-align:left; padding:12px 16px; background:var(--bg); font-weight:600; font-size:11px; color:var(--text-secondary); white-space:nowrap; }
+        td { padding:10px 16px; border-bottom:1px solid var(--border); }
+        tr:last-child td { border-bottom:none; }
+        tr:hover td { background:#FAFAFA; }
+        .badge { padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600; }
+        .badge.admin { background:#DBEAFE; color:#1E40AF; }
+        .badge.user { background:#F3F4F6; color:#374151; }
+        .badge.verified { background:#D1FAE5; color:#065F46; }
+        .badge.unverified { background:#FEF3C7; color:#92400E; }
+        .back-link { display:inline-block; margin-bottom:16px; font-size:13px; color:var(--primary); text-decoration:none; }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="/dashboard" class="logo"><div class="logo-icon">C</div><div class="logo-text">Carbon<span>Pass</span></div></a>
+        <span style="font-size:13px; color:var(--text-secondary); margin-left:auto;">{% if lang == 'zh' %}管理员{% else %}Admin{% endif %}</span>
+    </div>
+    <div class="main">
+        <a href="/admin" class="back-link">← {% if lang == 'zh' %}返回管理后台{% else %}Back to Admin{% endif %}</a>
+        <h1 class="page-title">{% if lang == 'zh' %}用户管理{% else %}User Management{% endif %}</h1>
+        <p class="page-desc">{% if lang == 'zh' %}共 {{ users|length }} 个注册用户{% else %}Total {{ users|length }} registered users{% endif %}</p>
+        <div class="card">
+            <table>
+                <tr><th>ID</th><th>{% if lang == 'zh' %}姓名{% else %}Name{% endif %}</th><th>Email</th><th>{% if lang == 'zh' %}角色{% else %}Role{% endif %}</th><th>{% if lang == 'zh' %}公司{% else %}Company{% endif %}</th><th>{% if lang == 'zh' %}邮箱验证{% else %}Verified{% endif %}</th><th>{% if lang == 'zh' %}注册时间{% else %}Registered{% endif %}</th></tr>
+                {% for u in users %}
+                <tr>
+                    <td>{{ u.id }}</td>
+                    <td>{{ u.name }}</td>
+                    <td>{{ u.email }}</td>
+                    <td><span class="badge {{ u.role }}">{{ u.role }}</span></td>
+                    <td>{{ u.company.name if u.company else '—' }}</td>
+                    <td><span class="badge {{ 'verified' if u.email_verified else 'unverified' }}">{{ '✓' if u.email_verified else '✗' }}</span></td>
+                    <td>{{ u.created_at.strftime('%Y-%m-%d') }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</body>
+</html>

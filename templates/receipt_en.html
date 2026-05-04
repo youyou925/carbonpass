@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>碳迹智识 - 智能票据识别</title>
+    <title>Receipt OCR - CarbonPass</title>
     <style>
         * {
             margin: 0;
@@ -473,11 +473,11 @@
 
     <!-- Header -->
     <div class="header">
-        <div class="logo">
+        <a href="/?lang=en" class="logo">
             <div class="logo-icon">🌱</div>
-            <div class="logo-text">碳迹<span>智识</span></div>
-        </div>
-        <div class="header-badge">双碳专用</div>
+            <div class="logo-text">Carbon<span>Pass</span></div>
+        </a>
+        <div class="header-badge">Carbon Neutral</div>
     </div>
 
     <!-- Main Content -->
@@ -488,8 +488,8 @@
             <div class="upload-zone">
                 <div class="upload-border" id="uploadBorder" onclick="document.getElementById('fileInput').click()">
                     <div class="upload-icon-wrap">📷</div>
-                    <div class="upload-title">点击上传票据图片</div>
-                    <div class="upload-hint">或拖拽图片到这里</div>
+                    <div class="upload-title">Click to Upload Receipt Image</div>
+                    <div class="upload-hint">or drag and drop image here</div>
                     <div class="upload-formats">
                         <span class="format-tag">JPG</span>
                         <span class="format-tag">PNG</span>
@@ -505,7 +505,7 @@
                 <div style="padding: 0 32px 24px;">
                     <button type="submit" class="camera-btn" id="submitBtn">
                         <span>🚀</span>
-                        开始智能识别
+                        Start Smart Recognition
                     </button>
                 </div>
             </form>
@@ -513,7 +513,7 @@
             <!-- Processing Animation -->
             <div class="processing" id="processing">
                 <div class="spinner"></div>
-                <div class="processing-text">正在识别中，请稍候...</div>
+                <div class="processing-text">Processing, please wait...</div>
             </div>
 
             <!-- Result Section -->
@@ -522,15 +522,15 @@
                 <div class="result-header">
                     <div class="result-title">
                         <div class="result-title-icon">✓</div>
-                        识别完成
+                        Recognition Complete
                     </div>
-                    <div class="result-badge">已处理</div>
+                    <div class="result-badge">Processed</div>
                 </div>
 
                 {% if image_path %}
                 <div class="preview-wrap">
-                    <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="票据预览" class="preview-image">
-                    <div class="preview-overlay">票据图片</div>
+                    <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Receipt Preview" class="preview-image">
+                    <div class="preview-overlay">Receipt Image</div>
                 </div>
                 {% endif %}
 
@@ -540,10 +540,10 @@
 
                 <div class="action-bar">
                     <button class="action-btn action-copy" onclick="copyResult()">
-                        <span>📋</span> 复制结果
+                        <span>📋</span> Copy Result
                     </button>
                     <button class="action-btn action-export" onclick="exportResult()">
-                        <span>📥</span> 导出文本
+                        <span>📥</span> Export Text
                     </button>
                 </div>
             </div>
@@ -552,13 +552,13 @@
                 <div class="result-header">
                     <div class="result-title">
                         <div class="result-title-icon">📝</div>
-                        识别结果
+                        Recognition Result
                     </div>
                 </div>
                 <div class="result-text-wrap">
                     <div class="result-empty" id="resultEmpty">
                         <div class="result-empty-icon">📄</div>
-                        <div>上传票据图片即可自动识别文字</div>
+                        <div>Upload receipt image for automatic text recognition</div>
                     </div>
                     <div class="result-text" id="resultText" style="display:none;"></div>
                 </div>
@@ -569,19 +569,19 @@
         <!-- Tips -->
         <div class="tips-section">
             <div class="tips-title">
-                <span>💡</span> 识别小技巧
+                <span>💡</span> Recognition Tips
             </div>
             <div class="tips-content">
-                • 确保票据文字清晰，光照均匀<br>
-                • 尽量让票据水平放置，避免倾斜<br>
-                • 高清图片识别效果更佳<br>
-                • 识别结果可一键复制，用于碳排放核算
+                • Ensure receipt text is clear with even lighting<br>
+                • Try to keep receipt level, avoid tilting<br>
+                • High-definition images produce better results<br>
+                • Recognition results can be copied for carbon emission calculations
             </div>
         </div>
 
         <!-- Footer -->
         <div class="footer">
-            碳迹智识 · 支持双碳政策下的票据碳数据提取
+            CarbonPass · Supporting carbon receipt data extraction under carbon neutrality policies
         </div>
     </div>
 
@@ -592,8 +592,8 @@
                 const border = document.getElementById('uploadBorder');
                 border.classList.add('active');
                 const fileName = input.files[0].name;
-                border.querySelector('.upload-title').textContent = '已选择: ' + fileName;
-                border.querySelector('.upload-hint').textContent = '点击"开始智能识别"按钮';
+                border.querySelector('.upload-title').textContent = 'Selected: ' + fileName;
+                border.querySelector('.upload-hint').textContent = 'Click "Start Smart Recognition" button';
             }
         }
 
@@ -632,7 +632,7 @@
                 const btns = document.querySelectorAll('.action-copy');
                 btns.forEach(function(btn) {
                     const original = btn.innerHTML;
-                    btn.innerHTML = '<span>✓</span> 已复制';
+                    btn.innerHTML = '<span>✓</span> Copied';
                     btn.style.background = '#888';
                     setTimeout(function() {
                         btn.innerHTML = original;
@@ -649,7 +649,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = '识别结果_' + new Date().toISOString().slice(0,10) + '.txt';
+            a.download = 'Recognition_Result_' + new Date().toISOString().slice(0,10) + '.txt';
             a.click();
             URL.revokeObjectURL(url);
         }

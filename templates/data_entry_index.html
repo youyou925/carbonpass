@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if lang == 'zh' %}数据填报 - CarbonPass{% else %}Data Entry - CarbonPass{% endif %}</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root { --primary:#0B4D3E; --primary-dark:#083A2E; --accent:#14B8A6; --success:#16A34A; --warning:#F59E0B; --bg:#F5F7F2; --card-bg:#FFF; --text-primary:#1E293B; --text-secondary:#64748B; --text-hint:#94A3B8; --border:#E2E8F0; --radius:8px; --shadow:0 1px 3px rgba(0,0,0,0.1); }
+        body { font-family:'Inter',-apple-system,'Microsoft YaHei',sans-serif; background:var(--bg); color:var(--text-primary); }
+        .topbar { background:var(--card-bg); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); }
+        .logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+        .logo-icon { width:32px; height:32px; background:linear-gradient(135deg,var(--primary),var(--accent)); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:14px; }
+        .logo-text { font-size:16px; font-weight:700; color:var(--text-primary); }
+        .logo-text span { color:var(--primary); }
+        .nav { display:flex; gap:4px; }
+        .nav a { padding:8px 14px; border-radius:var(--radius); text-decoration:none; color:var(--text-secondary); font-size:13px; }
+        .nav a:hover,.nav a.active { background:var(--bg); color:var(--primary); }
+        .main { max-width:800px; margin:0 auto; padding:24px; }
+        .page-title { font-size:20px; font-weight:700; margin-bottom:4px; }
+        .page-desc { font-size:13px; color:var(--text-secondary); margin-bottom:20px; }
+        .card { background:var(--card-bg); border-radius:12px; padding:24px; box-shadow:var(--shadow); margin-bottom:16px; }
+        .period-item { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border); }
+        .period-item:last-child { border-bottom:none; }
+        .period-info { display:flex; align-items:center; gap:12px; }
+        .period-label { font-size:15px; font-weight:600; }
+        .period-meta { font-size:12px; color:var(--text-secondary); }
+        .badge { padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600; }
+        .badge.draft { background:#FEF3C7; color:#92400E; }
+        .badge.submitted { background:#DBEAFE; color:#1E40AF; }
+        .badge.calculated { background:#D1FAE5; color:#065F46; }
+        .btn { padding:8px 16px; border-radius:var(--radius); text-decoration:none; font-size:13px; font-weight:500; cursor:pointer; border:none; }
+        .btn-primary { background:var(--primary); color:white; }
+        .btn-primary:hover { background:var(--primary-dark); }
+        .btn-outline { background:transparent; color:var(--primary); border:1.5px solid var(--primary); }
+        .btn-sm { padding:6px 12px; font-size:12px; }
+        .empty { text-align:center; padding:40px; color:var(--text-hint); }
+        .empty-icon { font-size:40px; margin-bottom:12px; }
+        .new-btn { display:inline-flex; align-items:center; gap:8px; padding:12px 24px; background:var(--primary); color:white; border-radius:12px; text-decoration:none; font-size:14px; font-weight:600; }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <div style="display:flex; align-items:center; gap:24px;">
+            <a href="/dashboard" class="logo"><div class="logo-icon">C</div><div class="logo-text">Carbon<span>Pass</span></div></a>
+            <div class="nav">
+                <a href="/dashboard">{% if lang == 'zh' %}仪表盘{% else %}Dashboard{% endif %}</a>
+                <a href="/data-entry" class="active">{% if lang == 'zh' %}数据填报{% else %}Data Entry{% endif %}</a>
+                <a href="/results">{% if lang == 'zh' %}核算结果{% else %}Results{% endif %}</a>
+                <a href="/reports">{% if lang == 'zh' %}报告管理{% else %}Reports{% endif %}</a>
+                <a href="/company/profile">{% if lang == 'zh' %}企业设置{% else %}Settings{% endif %}</a>
+            </div>
+        </div>
+        <a href="/logout" style="font-size:12px; color:var(--text-secondary); text-decoration:none;">{% if lang == 'zh' %}退出{% else %}Logout{% endif %}</a>
+    </div>
+    <div class="main">
+        <h1 class="page-title">{% if lang == 'zh' %}数据填报{% else %}Data Entry{% endif %}</h1>
+        <p class="page-desc">{% if lang == 'zh' %}管理您的碳排放数据填报周期{% else %}Manage your carbon data reporting periods{% endif %}</p>
+
+        <a href="/data-entry/new" class="new-btn" style="margin-bottom:20px; display:inline-flex;">+ {% if lang == 'zh' %}新建填报{% else %}New Entry{% endif %}</a>
+
+        <div class="card">
+            {% if periods %}
+            {% for p in periods %}
+            <div class="period-item">
+                <div class="period-info">
+                    <div>
+                        <div class="period-label">{{ p.label(lang) }}</div>
+                        <div class="period-meta">{% if lang == 'zh' %}状态: {% else %}Status: {% endif %}{{ p.status }}</div>
+                    </div>
+                </div>
+                <div style="display:flex; gap:8px;">
+                    {% if p.status == 'draft' %}
+                    <a href="/data-entry/{{ p.id }}/step1" class="btn btn-outline btn-sm">{% if lang == 'zh' %}继续编辑{% else %}Continue{% endif %}</a>
+                    {% endif %}
+                    {% if p.status == 'calculated' %}
+                    <a href="/results/{{ p.id }}" class="btn btn-outline btn-sm">{% if lang == 'zh' %}查看结果{% else %}View Results{% endif %}</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty">
+                <div class="empty-icon">📋</div>
+                <p>{% if lang == 'zh' %}暂无填报记录{% else %}No entries yet{% endif %}</p>
+                <a href="/data-entry/new" class="new-btn" style="margin-top:16px;">+ {% if lang == 'zh' %}开始首次填报{% else %}Start First Entry{% endif %}</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if lang == 'zh' %}核算结果 - CarbonPass{% else %}Results - CarbonPass{% endif %}</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root { --primary:#0B4D3E; --primary-dark:#083A2E; --accent:#14B8A6; --bg:#F5F7F2; --card-bg:#FFF; --text-primary:#1E293B; --text-secondary:#64748B; --text-hint:#94A3B8; --border:#E2E8F0; --radius:8px; --shadow:0 1px 3px rgba(0,0,0,0.1); }
+        body { font-family:'Inter',-apple-system,'Microsoft YaHei',sans-serif; background:var(--bg); color:var(--text-primary); }
+        .topbar { background:var(--card-bg); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); }
+        .logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+        .logo-icon { width:32px; height:32px; background:linear-gradient(135deg,var(--primary),var(--accent)); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:14px; }
+        .logo-text { font-size:16px; font-weight:700; }
+        .logo-text span { color:var(--primary); }
+        .nav { display:flex; gap:4px; }
+        .nav a { padding:8px 14px; border-radius:var(--radius); text-decoration:none; color:var(--text-secondary); font-size:13px; }
+        .nav a:hover,.nav a.active { background:var(--bg); color:var(--primary); }
+        .main { max-width:900px; margin:0 auto; padding:24px; }
+        .page-title { font-size:20px; font-weight:700; margin-bottom:4px; }
+        .page-desc { font-size:13px; color:var(--text-secondary); margin-bottom:20px; }
+        .card { background:var(--card-bg); border-radius:12px; box-shadow:var(--shadow); overflow:hidden; }
+        .period-row { display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid var(--border); }
+        .period-row:last-child { border-bottom:none; }
+        .period-row:hover { background:#FAFAFA; }
+        .period-info { }
+        .period-label { font-size:15px; font-weight:600; }
+        .period-meta { font-size:12px; color:var(--text-secondary); }
+        .badge { padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600; }
+        .badge.calculated { background:#D1FAE5; color:#065F46; }
+        .badge.draft { background:#FEF3C7; color:#92400E; }
+        .badge.submitted { background:#DBEAFE; color:#1E40AF; }
+        .btn { padding:8px 16px; border-radius:var(--radius); text-decoration:none; font-size:13px; font-weight:500; }
+        .btn-outline { color:var(--primary); border:1.5px solid var(--primary); }
+        .btn-outline:hover { background:var(--primary); color:white; }
+        .empty { text-align:center; padding:60px; color:var(--text-hint); }
+        .empty-icon { font-size:40px; margin-bottom:12px; }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <div style="display:flex; align-items:center; gap:24px;">
+            <a href="/dashboard" class="logo"><div class="logo-icon">C</div><div class="logo-text">Carbon<span>Pass</span></div></a>
+            <div class="nav">
+                <a href="/dashboard">{% if lang == 'zh' %}仪表盘{% else %}Dashboard{% endif %}</a>
+                <a href="/data-entry">{% if lang == 'zh' %}数据填报{% else %}Data Entry{% endif %}</a>
+                <a href="/results" class="active">{% if lang == 'zh' %}核算结果{% else %}Results{% endif %}</a>
+                <a href="/reports">{% if lang == 'zh' %}报告管理{% else %}Reports{% endif %}</a>
+                <a href="/company/profile">{% if lang == 'zh' %}企业设置{% else %}Settings{% endif %}</a>
+            </div>
+        </div>
+        <a href="/logout" style="font-size:12px; color:var(--text-secondary); text-decoration:none;">{% if lang == 'zh' %}退出{% else %}Logout{% endif %}</a>
+    </div>
+    <div class="main">
+        <h1 class="page-title">{% if lang == 'zh' %}核算结果{% else %}Calculation Results{% endif %}</h1>
+        <p class="page-desc">{% if lang == 'zh' %}查看所有历史核算记录{% else %}View all historical calculation records{% endif %}</p>
+
+        <div class="card">
+            {% if periods %}
+            {% for p in periods %}
+            <div class="period-row">
+                <div class="period-info">
+                    <div class="period-label">{{ p.label(lang) }}</div>
+                    <div class="period-meta">
+                        {% if p.calculation_result %}
+                        {% if lang == 'zh' %}总排放: {% else %}Total: {% endif %}{{ p.calculation_result.total_tonnes }} tonnes CO₂e ·
+                        {% endif %}
+                        {% if lang == 'zh' %}提交于: {% else %}Submitted: {% endif %}{{ p.submitted_at.strftime('%Y-%m-%d') if p.submitted_at else '—' }}
+                    </div>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <span class="badge {{ p.status }}">{{ p.status }}</span>
+                    {% if p.status == 'calculated' %}
+                    <a href="/results/{{ p.id }}" class="btn btn-outline">{% if lang == 'zh' %}查看详情{% else %}View{% endif %}</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty">
+                <div class="empty-icon">📊</div>
+                <p>{% if lang == 'zh' %}暂无核算记录{% else %}No results yet{% endif %}</p>
+                <a href="/data-entry/new" style="display:inline-block; margin-top:12px; padding:10px 20px; background:var(--primary); color:white; border-radius:var(--radius); text-decoration:none; font-size:14px;">+ {% if lang == 'zh' %}创建新填报{% else %}New Entry{% endif %}</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if lang == 'zh' %}企业设置 - CarbonPass{% else %}Company Settings - CarbonPass{% endif %}</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --primary: #0B4D3E; --primary-dark: #083A2E; --accent: #14B8A6;
+            --bg: #F5F7F2; --card-bg: #FFFFFF;
+            --text-primary: #1E293B; --text-secondary: #64748B; --text-hint: #94A3B8;
+            --border: #E2E8F0; --radius: 8px; --shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        body { font-family: 'Inter', -apple-system, 'Microsoft YaHei', sans-serif; background:var(--bg); color:var(--text-primary); }
+        .lang-switch { position:fixed; top:12px; left:12px; z-index:1000; display:flex; background:var(--card-bg); border-radius:20px; box-shadow:var(--shadow); overflow:hidden; }
+        .lang-btn { padding:6px 12px; font-size:11px; font-weight:600; color:var(--text-secondary); text-decoration:none; }
+        .lang-btn.active { background:var(--primary); color:white; }
+        .topbar { background:var(--card-bg); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); }
+        .logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+        .logo-icon { width:32px; height:32px; background:linear-gradient(135deg,var(--primary),var(--accent)); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:14px; }
+        .logo-text { font-size:16px; font-weight:700; color:var(--text-primary); }
+        .logo-text span { color:var(--primary); }
+        .nav { display:flex; gap:4px; }
+        .nav a { padding:8px 14px; border-radius:var(--radius); text-decoration:none; color:var(--text-secondary); font-size:13px; font-weight:500; }
+        .nav a:hover, .nav a.active { background:var(--bg); color:var(--primary); }
+        .user-section { display:flex; align-items:center; gap:12px; }
+        .main { max-width:800px; margin:0 auto; padding:24px; }
+        .page-title { font-size:20px; font-weight:700; margin-bottom:20px; }
+        .card { background:var(--card-bg); border-radius:12px; padding:32px; box-shadow:var(--shadow); margin-bottom:24px; }
+        .section-title { font-size:15px; font-weight:600; margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid var(--border); }
+        .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+        .form-group { margin-bottom:0; }
+        .form-group.full { grid-column:span 2; }
+        .form-label { display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:6px; }
+        .form-input { width:100%; padding:10px 14px; border:1.5px solid var(--border); border-radius:var(--radius); font-size:14px; background:var(--bg); outline:none; transition:border-color .2s; }
+        .form-input:focus { border-color:var(--primary); }
+        select.form-input { cursor:pointer; }
+        .checkbox-group { display:flex; flex-wrap:wrap; gap:10px; margin-top:4px; }
+        .checkbox-item { display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer; }
+        .btn-primary { padding:12px 32px; background:var(--primary); color:white; border:none; border-radius:var(--radius); font-size:15px; font-weight:600; cursor:pointer; }
+        .btn-primary:hover { background:var(--primary-dark); }
+        .flash { padding:10px 14px; border-radius:var(--radius); margin-bottom:16px; font-size:13px; }
+        .flash.success { background:#F0FDF4; color:#16A34A; border:1px solid #BBF7D0; }
+        .flash.warning { background:#FFFBEB; color:#92400E; border:1px solid #FDE68A; }
+        .flash.info { background:#EFF6FF; color:#2563EB; border:1px solid #BFDBFE; }
+        @media (max-width:640px) { .form-grid { grid-template-columns:1fr; } .form-group.full { grid-column:1; } }
+    </style>
+</head>
+<body>
+    <div class="lang-switch">
+        <a href="/company/profile?lang=zh" class="lang-btn {% if lang == 'zh' %}active{% endif %}">中文</a>
+        <a href="/company/profile?lang=en" class="lang-btn {% if lang == 'en' %}active{% endif %}">EN</a>
+    </div>
+    <div class="topbar">
+        <div style="display:flex; align-items:center; gap:24px;">
+            <a href="/dashboard" class="logo">
+                <div class="logo-icon">C</div>
+                <div class="logo-text">Carbon<span>Pass</span></div>
+            </a>
+            <div class="nav">
+                <a href="/dashboard">{% if lang == 'zh' %}仪表盘{% else %}Dashboard{% endif %}</a>
+                <a href="/data-entry">{% if lang == 'zh' %}数据填报{% else %}Data Entry{% endif %}</a>
+                <a href="/results">{% if lang == 'zh' %}核算结果{% else %}Results{% endif %}</a>
+                <a href="/reports">{% if lang == 'zh' %}报告管理{% else %}Reports{% endif %}</a>
+                <a href="/company/profile" class="active">{% if lang == 'zh' %}企业设置{% else %}Settings{% endif %}</a>
+            </div>
+        </div>
+        <div class="user-section">
+            <span style="font-size:13px;">{{ current_user.name }}</span>
+            <a href="/logout" style="font-size:12px; color:var(--text-secondary); text-decoration:none;">{% if lang == 'zh' %}退出{% else %}Logout{% endif %}</a>
+        </div>
+    </div>
+    <div class="main">
+        <h1 class="page-title">{% if lang == 'zh' %}企业设置{% else %}Company Settings{% endif %}</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}{% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}{% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <div class="card">
+                <div class="section-title">{% if lang == 'zh' %}基本信息{% else %}Basic Information{% endif %}</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">{% if lang == 'zh' %}企业名称{% else %}Company Name{% endif %}</label>
+                        <input type="text" name="name" class="form-input" value="{{ company.name if company else '' }}" placeholder="{% if lang == 'zh' %}与营业执照一致{% else %}As per business registration{% endif %}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{% if lang == 'zh' %}英文名称{% else %}Company Name (EN){% endif %}</label>
+                        <input type="text" name="name_en" class="form-input" value="{{ company.name_en if company else '' }}" placeholder="{% if lang == 'zh' %}用于英文报告{% else %}For English reports{% endif %}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">SSM {% if lang == 'zh' %}注册号{% else %}Registration No.{% endif %}</label>
+                        <input type="text" name="ssm_number" class="form-input" value="{{ company.ssm_number if company else '' }}" placeholder="{% if lang == 'zh' %}马来西亚公司注册号{% else %}Malaysia company reg. no.{% endif %}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{% if lang == 'zh' %}所在州属{% else %}State{% endif %}</label>
+                        <select name="state" class="form-input">
+                            <option value="">{% if lang == 'zh' %}请选择{% else %}Select state{% endif %}</option>
+                            {% for s in states %}
+                            <option value="{{ s }}" {% if company and company.state == s %}selected{% endif %}>{{ s }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label">{% if lang == 'zh' %}详细地址{% else %}Address{% endif %}</label>
+                        <input type="text" name="address" class="form-input" value="{{ company.address if company else '' }}" placeholder="{% if lang == 'zh' %}工厂/主要生产地址{% else %}Factory/main production address{% endif %}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{% if lang == 'zh' %}主营行业{% else %}Industry{% endif %}</label>
+                        <select name="industry" class="form-input">
+                            <option value="">{% if lang == 'zh' %}请选择{% else %}Select industry{% endif %}</option>
+                            {% for ind in industries %}
+                            <option value="{{ ind }}" {% if company and company.industry == ind %}selected{% endif %}>{{ industry_labels.get(ind, ind) }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{% if lang == 'zh' %}主要出口目的地{% else %}Export Markets{% endif %}</label>
+                        <div class="checkbox-group">
+                            {% for m in export_markets %}
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="export_markets" value="{{ m }}" {% if company and m in company.get_export_markets_list() %}checked{% endif %}>
+                                {{ m }}
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{% if lang == 'zh' %}企业官网{% else %}Website{% endif %}</label>
+                        <input type="text" name="website" class="form-input" value="{{ company.website if company else '' }}" placeholder="https://">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{% if lang == 'zh' %}联系电话{% else %}Contact Phone{% endif %}</label>
+                        <input type="text" name="contact_phone" class="form-input" value="{{ company.contact_phone if company else '' }}" placeholder="+60 xxx xxxx">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="section-title">{% if lang == 'zh' %}产品信息{% else %}Product Information{% endif %}</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">{% if lang == 'zh' %}主要产品名称{% else %}Main Product Name{% endif %}</label>
+                        <input type="text" name="product_name" class="form-input" value="{{ company.product_name if company else '' }}" placeholder="{% if lang == 'zh' %}例如：热轧钢卷{% else %}e.g. Hot Rolled Steel Coil{% endif %}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{% if lang == 'zh' %}产品单位{% else %}Product Unit{% endif %}</label>
+                        <select name="product_unit" class="form-input">
+                            <option value="tonnes" {% if company and company.product_unit == 'tonnes' %}selected{% endif %}>{% if lang == 'zh' %}吨{% else %}Tonnes{% endif %}</option>
+                            <option value="kg" {% if company and company.product_unit == 'kg' %}selected{% endif %}>{% if lang == 'zh' %}千克{% else %}KG{% endif %}</option>
+                            <option value="m3" {% if company and company.product_unit == 'm3' %}selected{% endif %}>{% if lang == 'zh' %}立方米{% else %}m³{% endif %}</option>
+                            <option value="pieces" {% if company and company.product_unit == 'pieces' %}selected{% endif %}>{% if lang == 'zh' %}件{% else %}Pieces{% endif %}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary">{% if lang == 'zh' %}保存设置{% else %}Save Settings{% endif %}</button>
+        </form>
+    </div>
+</body>
+</html>

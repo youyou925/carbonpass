@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if lang == 'zh' %}生产数据 - CarbonPass{% else %}Production Data - CarbonPass{% endif %}</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root { --primary:#0B4D3E; --primary-dark:#083A2E; --accent:#14B8A6; --bg:#F5F7F2; --card-bg:#FFF; --text-primary:#1E293B; --text-secondary:#64748B; --text-hint:#94A3B8; --border:#E2E8F0; --radius:8px; --shadow:0 2px 12px rgba(0,0,0,0.08); }
+        body { font-family:'Inter',-apple-system,'Microsoft YaHei',sans-serif; background:var(--bg); color:var(--text-primary); }
+        .topbar { background:var(--card-bg); padding:12px 24px; display:flex; align-items:center; border-bottom:1px solid var(--border); }
+        .logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+        .logo-icon { width:32px; height:32px; background:linear-gradient(135deg,var(--primary),var(--accent)); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:14px; }
+        .logo-text { font-size:16px; font-weight:700; }
+        .logo-text span { color:var(--primary); }
+        .main { max-width:720px; margin:0 auto; padding:24px; }
+        .stepper { display:flex; align-items:flex-start; margin-bottom:32px; }
+        .step-item { flex:1; display:flex; flex-direction:column; align-items:center; position:relative; }
+        .step-item:not(:last-child)::after { content:''; position:absolute; top:15px; left:calc(50% + 16px); right:calc(-50% + 16px); height:2px; background:var(--border); }
+        .step-item.done:not(:last-child)::after { background:var(--accent); }
+        .step-circle { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; background:var(--bg); border:2px solid var(--border); color:var(--text-hint); position:relative; z-index:1; }
+        .step-item.active .step-circle { background:var(--primary); border-color:var(--primary); color:white; }
+        .step-item.done .step-circle { background:var(--accent); border-color:var(--accent); color:white; font-size:14px; }
+        .step-label { font-size:11px; color:var(--text-hint); margin-top:6px; text-align:center; }
+        .step-item.active .step-label { color:var(--primary); font-weight:600; }
+        .step-item.done .step-label { color:var(--accent); }
+        .card { background:var(--card-bg); border-radius:12px; padding:24px; box-shadow:var(--shadow); margin-bottom:16px; }
+        .section-title { font-size:15px; font-weight:600; margin-bottom:4px; }
+        .section-hint { font-size:12px; color:var(--text-secondary); margin-bottom:16px; }
+        .product-row { background:var(--bg); border-radius:var(--radius); padding:16px; margin-bottom:12px; position:relative; }
+        .product-row .fields { display:grid; grid-template-columns:2fr 1fr 1fr auto; gap:12px; align-items:end; }
+        .input-label { font-size:11px; color:var(--text-secondary); margin-bottom:4px; }
+        .input-field { width:100%; padding:8px 10px; border:1.5px solid var(--border); border-radius:6px; font-size:14px; background:var(--card-bg); outline:none; }
+        .input-field:focus { border-color:var(--primary); }
+        .btn { padding:10px 20px; border-radius:var(--radius); font-size:14px; font-weight:600; cursor:pointer; border:none; text-decoration:none; display:inline-block; }
+        .btn-primary { background:var(--primary); color:white; }
+        .btn-primary:hover { background:var(--primary-dark); }
+        .btn-outline { background:transparent; color:var(--text-secondary); border:1.5px solid var(--border); }
+        .btn-remove { background:#FEF2F2; color:#DC2626; border:none; border-radius:6px; padding:8px 12px; cursor:pointer; font-size:12px; }
+        .btn-add { padding:10px 16px; background:transparent; color:var(--primary); border:1.5px dashed var(--primary); border-radius:var(--radius); font-size:13px; font-weight:600; cursor:pointer; width:100%; }
+        .btn-row { display:flex; justify-content:space-between; gap:12px; margin-top:20px; }
+        .checkbox-label { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-secondary); cursor:pointer; }
+        @media (max-width:640px) { .product-row .fields { grid-template-columns:1fr 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="/dashboard" class="logo"><div class="logo-icon">C</div><div class="logo-text">Carbon<span>Pass</span></div></a>
+        <span style="font-size:13px; color:var(--text-secondary); margin-left:auto;">{{ period.label(lang) }}</span>
+    </div>
+    <div class="main">
+        <div class="stepper">
+            <div class="step-item done">
+                <div class="step-circle">✓</div>
+                <div class="step-label">{% if lang == 'zh' %}能源数据{% else %}Energy{% endif %}</div>
+            </div>
+            <div class="step-item active">
+                <div class="step-circle">2</div>
+                <div class="step-label">{% if lang == 'zh' %}生产数据{% else %}Production{% endif %}</div>
+            </div>
+            <div class="step-item">
+                <div class="step-circle">3</div>
+                <div class="step-label">{% if lang == 'zh' %}其他排放{% else %}Other{% endif %}</div>
+            </div>
+            <div class="step-item">
+                <div class="step-circle">4</div>
+                <div class="step-label">{% if lang == 'zh' %}核对提交{% else %}Review{% endif %}</div>
+            </div>
+        </div>
+
+        <form method="POST" id="prodForm">
+            <div class="card">
+                <div class="section-title">{% if lang == 'zh' %}🏭 生产数据{% else %}🏭 Production Data{% endif %}</div>
+                <div class="section-hint">{% if lang == 'zh' %}请填写本填报周期内，主要产品的实际产量（最多5种产品）。{% else %}Enter actual production quantities for this period (max 5 products).{% endif %}</div>
+
+                <div id="productContainer">
+                    {% if products %}
+                    {% for p in products %}
+                    <div class="product-row" data-index="{{ loop.index0 }}">
+                        <div class="fields">
+                            <div>
+                                <div class="input-label">{% if lang == 'zh' %}产品名称{% else %}Product Name{% endif %}</div>
+                                <input type="text" name="product_name[]" class="input-field" value="{{ p.product_name if p else '' }}" placeholder="{% if lang == 'zh' %}例如：热轧钢卷{% else %}e.g. HRC{% endif %}">
+                            </div>
+                            <div>
+                                <div class="input-label">{% if lang == 'zh' %}产量{% else %}Amount{% endif %}</div>
+                                <input type="number" name="amount[]" class="input-field" value="{{ p.amount if p else '0' }}" min="0" step="0.01">
+                            </div>
+                            <div>
+                                <div class="input-label">{% if lang == 'zh' %}单位{% else %}Unit{% endif %}</div>
+                                <select name="unit[]" class="input-field">
+                                    <option value="tonnes" {% if p and p.unit == 'tonnes' %}selected{% endif %}>{% if lang == 'zh' %}吨{% else %}tonnes{% endif %}</option>
+                                    <option value="kg" {% if p and p.unit == 'kg' %}selected{% endif %}>kg</option>
+                                    <option value="pieces" {% if p and p.unit == 'pieces' %}selected{% endif %}>{% if lang == 'zh' %}件{% else %}pieces{% endif %}</option>
+                                    <option value="m3" {% if p and p.unit == 'm3' %}selected{% endif %}>m³</option>
+                                </select>
+                            </div>
+                            <label class="checkbox-label" style="white-space:nowrap;">
+                                <input type="checkbox" name="export_to_eu[]" {% if p and p.export_to_eu %}checked{% endif %}>
+                                EU
+                            </label>
+                            <button type="button" class="btn-remove" onclick="this.closest('.product-row').remove()">✕</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="product-row" data-index="0">
+                        <div class="fields">
+                            <div>
+                                <div class="input-label">{% if lang == 'zh' %}产品名称{% else %}Product Name{% endif %}</div>
+                                <input type="text" name="product_name[]" class="input-field" placeholder="{% if lang == 'zh' %}例如：热轧钢卷{% else %}e.g. HRC{% endif %}">
+                            </div>
+                            <div>
+                                <div class="input-label">{% if lang == 'zh' %}产量{% else %}Amount{% endif %}</div>
+                                <input type="number" name="amount[]" class="input-field" value="0" min="0" step="0.01">
+                            </div>
+                            <div>
+                                <div class="input-label">{% if lang == 'zh' %}单位{% else %}Unit{% endif %}</div>
+                                <select name="unit[]" class="input-field"><option value="tonnes">{% if lang == 'zh' %}吨{% else %}tonnes{% endif %}</option><option value="kg">kg</option><option value="pieces">{% if lang == 'zh' %}件{% else %}pieces{% endif %}</option><option value="m3">m³</option></select>
+                            </div>
+                            <label class="checkbox-label"><input type="checkbox" name="export_to_eu[]"> EU</label>
+                            <button type="button" class="btn-remove" onclick="this.closest('.product-row').remove()">✕</button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <button type="button" class="btn-add" onclick="addProduct()" style="margin-top:12px;">+ {% if lang == 'zh' %}添加产品{% else %}Add Product{% endif %}</button>
+            </div>
+
+            <div class="btn-row">
+                <a href="/data-entry/{{ period.id }}/step1" class="btn btn-outline">← {% if lang == 'zh' %}上一步{% else %}Previous{% endif %}</a>
+                <button type="submit" class="btn btn-primary">{% if lang == 'zh' %}保存并继续 →{% else %}Save & Continue →{% endif %}</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let productCount = {{ products|length if products else 1 }};
+        function addProduct() {
+            if (productCount >= 5) { alert('{% if lang == 'zh' %}最多添加5种产品{% else %}Max 5 products{% endif %}'); return; }
+            productCount++;
+            const container = document.getElementById('productContainer');
+            const div = document.createElement('div');
+            div.className = 'product-row';
+            div.dataset.index = productCount;
+            div.innerHTML = `<div class="fields">
+                <div><div class="input-label">{% if lang == 'zh' %}产品名称{% else %}Product Name{% endif %}</div><input type="text" name="product_name[]" class="input-field" placeholder="{% if lang == 'zh' %}产品名称{% else %}Product name{% endif %}"></div>
+                <div><div class="input-label">{% if lang == 'zh' %}产量{% else %}Amount{% endif %}</div><input type="number" name="amount[]" class="input-field" value="0" min="0" step="0.01"></div>
+                <div><div class="input-label">{% if lang == 'zh' %}单位{% else %}Unit{% endif %}</div><select name="unit[]" class="input-field"><option value="tonnes">{% if lang == 'zh' %}吨{% else %}tonnes{% endif %}</option><option value="kg">kg</option><option value="pieces">{% if lang == 'zh' %}件{% else %}pieces{% endif %}</option><option value="m3">m³</option></select></div>
+                <label class="checkbox-label"><input type="checkbox" name="export_to_eu[]"> EU</label>
+                <button type="button" class="btn-remove" onclick="this.closest('.product-row').remove()">✕</button>
+            </div>`;
+            container.appendChild(div);
+        }
+    </script>
+</body>
+</html>

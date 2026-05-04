@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if lang == 'zh' %}核对提交 - CarbonPass{% else %}Review - CarbonPass{% endif %}</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root { --primary:#0B4D3E; --primary-dark:#083A2E; --accent:#14B8A6; --bg:#F5F7F2; --card-bg:#FFF; --text-primary:#1E293B; --text-secondary:#64748B; --text-hint:#94A3B8; --border:#E2E8F0; --radius:8px; --shadow:0 2px 12px rgba(0,0,0,0.08); }
+        body { font-family:'Inter',-apple-system,'Microsoft YaHei',sans-serif; background:var(--bg); color:var(--text-primary); }
+        .topbar { background:var(--card-bg); padding:12px 24px; display:flex; align-items:center; border-bottom:1px solid var(--border); }
+        .logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+        .logo-icon { width:32px; height:32px; background:linear-gradient(135deg,var(--primary),var(--accent)); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:14px; }
+        .logo-text { font-size:16px; font-weight:700; }
+        .logo-text span { color:var(--primary); }
+        .main { max-width:720px; margin:0 auto; padding:24px; }
+        .stepper { display:flex; align-items:flex-start; margin-bottom:32px; }
+        .step-item { flex:1; display:flex; flex-direction:column; align-items:center; position:relative; }
+        .step-item:not(:last-child)::after { content:''; position:absolute; top:15px; left:calc(50% + 16px); right:calc(-50% + 16px); height:2px; background:var(--border); }
+        .step-item.done:not(:last-child)::after { background:var(--accent); }
+        .step-circle { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; background:var(--bg); border:2px solid var(--border); color:var(--text-hint); position:relative; z-index:1; }
+        .step-item.active .step-circle { background:var(--primary); border-color:var(--primary); color:white; }
+        .step-item.done .step-circle { background:var(--accent); border-color:var(--accent); color:white; font-size:14px; }
+        .step-label { font-size:11px; color:var(--text-hint); margin-top:6px; text-align:center; }
+        .step-item.active .step-label { color:var(--primary); font-weight:600; }
+        .step-item.done .step-label { color:var(--accent); }
+        .card { background:var(--card-bg); border-radius:12px; padding:24px; box-shadow:var(--shadow); margin-bottom:16px; }
+        .section-title { font-size:15px; font-weight:600; margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+        .data-table { width:100%; border-collapse:collapse; font-size:13px; }
+        .data-table th { text-align:left; padding:8px 12px; background:var(--bg); color:var(--text-secondary); font-weight:600; font-size:11px; text-transform:uppercase; }
+        .data-table td { padding:8px 12px; border-bottom:1px solid var(--border); }
+        .data-table tr:last-child td { border-bottom:none; }
+        .btn { padding:10px 20px; border-radius:var(--radius); font-size:14px; font-weight:600; cursor:pointer; border:none; text-decoration:none; }
+        .btn-primary { background:var(--primary); color:white; }
+        .btn-primary:hover { background:var(--primary-dark); }
+        .btn-outline { background:transparent; color:var(--text-secondary); border:1.5px solid var(--border); }
+        .btn-row { display:flex; justify-content:space-between; gap:12px; margin-top:20px; }
+        .confirm-box { background:var(--bg); border-radius:var(--radius); padding:16px; margin-top:16px; }
+        .confirm-label { display:flex; align-items:flex-start; gap:10px; font-size:13px; color:var(--text-primary); cursor:pointer; }
+        .flash { padding:10px 14px; border-radius:var(--radius); margin-bottom:16px; font-size:13px; }
+        .flash.warning { background:#FFFBEB; color:#92400E; border:1px solid #FDE68A; }
+        .flash.success { background:#F0FDF4; color:#16A34A; border:1px solid #BBF7D0; }
+        .flash.error { background:#FEF2F2; color:#DC2626; border:1px solid #FECACA; }
+        .spinner { display:none; width:20px; height:20px; border:2px solid var(--border); border-top-color:white; border-radius:50%; animation:spin .8s linear infinite; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="/dashboard" class="logo"><div class="logo-icon">C</div><div class="logo-text">Carbon<span>Pass</span></div></a>
+        <span style="font-size:13px; color:var(--text-secondary); margin-left:auto;">{{ period.label(lang) }}</span>
+    </div>
+    <div class="main">
+        <div class="stepper">
+            <div class="step-item done">
+                <div class="step-circle">✓</div>
+                <div class="step-label">{% if lang == 'zh' %}能源数据{% else %}Energy{% endif %}</div>
+            </div>
+            <div class="step-item done">
+                <div class="step-circle">✓</div>
+                <div class="step-label">{% if lang == 'zh' %}生产数据{% else %}Production{% endif %}</div>
+            </div>
+            <div class="step-item done">
+                <div class="step-circle">✓</div>
+                <div class="step-label">{% if lang == 'zh' %}其他排放{% else %}Other{% endif %}</div>
+            </div>
+            <div class="step-item active">
+                <div class="step-circle">4</div>
+                <div class="step-label">{% if lang == 'zh' %}核对提交{% else %}Review{% endif %}</div>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}{% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}{% endif %}
+        {% endwith %}
+
+        <form method="POST" id="submitForm">
+            <!-- Energy Data Review -->
+            <div class="card">
+                <div class="section-title">{% if lang == 'zh' %}⚡ 能源消耗数据{% else %}⚡ Energy Consumption{% endif %}</div>
+                {% if energy %}
+                <table class="data-table">
+                    <tr><th>{% if lang == 'zh' %}能源类型{% else %}Energy Type{% endif %}</th><th>{% if lang == 'zh' %}消耗量{% else %}Amount{% endif %}</th><th>{% if lang == 'zh' %}单位{% else %}Unit{% endif %}</th><th></th></tr>
+                    {% if energy.electricity_kwh > 0 %}<tr><td>{% if lang == 'zh' %}外购电力{% else %}Grid Electricity{% endif %}</td><td>{{ energy.electricity_kwh }}</td><td>kWh</td><td><a href="/data-entry/{{ period.id }}/step1" style="color:var(--primary);font-size:12px;">{% if lang == 'zh' %}编辑{% else %}Edit{% endif %}</a></td></tr>{% endif %}
+                    {% if energy.diesel_litres > 0 %}<tr><td>{% if lang == 'zh' %}柴油{% else %}Diesel{% endif %}</td><td>{{ energy.diesel_litres }}</td><td>L</td><td></td></tr>{% endif %}
+                    {% if energy.petrol_litres > 0 %}<tr><td>{% if lang == 'zh' %}汽油{% else %}Petrol{% endif %}</td><td>{{ energy.petrol_litres }}</td><td>L</td><td></td></tr>{% endif %}
+                    {% if energy.natural_gas_m3 > 0 %}<tr><td>{% if lang == 'zh' %}天然气{% else %}Natural Gas{% endif %}</td><td>{{ energy.natural_gas_m3 }}</td><td>m³</td><td></td></tr>{% endif %}
+                    {% if energy.lpg_kg > 0 %}<tr><td>LPG</td><td>{{ energy.lpg_kg }}</td><td>kg</td><td></td></tr>{% endif %}
+                    {% if energy.coal_tonne > 0 %}<tr><td>{% if lang == 'zh' %}煤炭{% else %}Coal{% endif %}</td><td>{{ energy.coal_tonne }}</td><td>{% if lang == 'zh' %}吨{% else %}tonne{% endif %}</td><td></td></tr>{% endif %}
+                </table>
+                {% else %}
+                <p style="color:var(--text-hint);font-size:13px;">{% if lang == 'zh' %}无能源数据{% else %}No energy data{% endif %}</p>
+                {% endif %}
+            </div>
+
+            <!-- Production Data Review -->
+            <div class="card">
+                <div class="section-title">{% if lang == 'zh' %}🏭 生产数据{% else %}🏭 Production Data{% endif %}</div>
+                {% if products %}
+                <table class="data-table">
+                    <tr><th>{% if lang == 'zh' %}产品名称{% else %}Product{% endif %}</th><th>{% if lang == 'zh' %}产量{% else %}Amount{% endif %}</th><th>{% if lang == 'zh' %}单位{% else %}Unit{% endif %}</th><th>{% if lang == 'zh' %}出口欧盟{% else %}Export EU{% endif %}</th><th></th></tr>
+                    {% for p in products %}
+                    <tr><td>{{ p.product_name }}</td><td>{{ p.amount }}</td><td>{{ p.unit }}</td><td>{% if p.export_to_eu %}✓{% else %}—{% endif %}</td><td><a href="/data-entry/{{ period.id }}/step2" style="color:var(--primary);font-size:12px;">{% if lang == 'zh' %}编辑{% else %}Edit{% endif %}</a></td></tr>
+                    {% endfor %}
+                </table>
+                {% else %}
+                <p style="color:var(--text-hint);font-size:13px;">{% if lang == 'zh' %}未添加产品{% else %}No products added{% endif %}</p>
+                {% endif %}
+            </div>
+
+            <!-- Other Emissions Review -->
+            <div class="card">
+                <div class="section-title">{% if lang == 'zh' %}🌫️ 其他排放{% else %}🌫️ Other Emissions{% endif %}</div>
+                <p style="font-size:13px;">
+                    {% if period.other_emissions and period.other_emissions > 0 %}
+                    {{ period.other_emissions }} {% if lang == 'zh' %}吨 CO₂e{% else %}tonnes CO₂e{% endif %}
+                    {% else %}
+                    <span style="color:var(--text-hint);">{% if lang == 'zh' %}未填写{% else %}None reported{% endif %}</span>
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- Confirmation -->
+            <div class="card">
+                <div class="confirm-box">
+                    <label class="confirm-label">
+                        <input type="checkbox" name="confirmation" id="confirmCheck" required>
+                        <span>{% if lang == 'zh' %}我确认以上数据真实准确，与实际生产记录一致。{% else %}I confirm that the above data is true and accurate, consistent with actual production records.{% endif %}</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <a href="/data-entry/{{ period.id }}/step3" class="btn btn-outline">← {% if lang == 'zh' %}上一步{% else %}Previous{% endif %}</a>
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <span id="btnText">{% if lang == 'zh' %}提交并计算 {% else %}Submit & Calculate →{% endif %}</span>
+                    <span class="spinner" id="btnSpinner"></span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('submitForm').addEventListener('submit', function() {
+            const btn = document.getElementById('submitBtn');
+            const text = document.getElementById('btnText');
+            const spinner = document.getElementById('btnSpinner');
+            btn.disabled = true;
+            text.textContent = '{% if lang == 'zh' %}计算中...{% else %}Calculating...{% endif %}';
+            spinner.style.display = 'inline-block';
+        });
+    </script>
+</body>
+</html>

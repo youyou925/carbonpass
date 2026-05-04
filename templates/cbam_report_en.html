@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CBAM 合规报告 - CarbonPass</title>
+    <title>CBAM Report - CarbonPass</title>
     <style>
         * {
             margin: 0;
@@ -558,87 +558,87 @@
 
     <!-- Header -->
     <div class="header">
-        <a href="/" class="logo">
+        <a href="/?lang=en" class="logo">
             <div class="logo-icon">🌱</div>
-            <div class="logo-text">碳迹<span>智识</span></div>
+            <div class="logo-text">Carbon<span>Pass</span></div>
         </a>
         <div class="nav-menu">
-            <a href="/contact" class="nav-item">Contact Me</a>
-            <a href="/receipt" class="nav-item">票据识别</a>
-            <a href="/carbon" class="nav-item">碳足迹核算</a>
-            <a href="/cbam" class="nav-item active">CBAM报告</a>
+            <a href="/contact?lang=en" class="nav-item">Contact</a>
+            <a href="/receipt?lang=en" class="nav-item">Receipt OCR</a>
+            <a href="/carbon?lang=en" class="nav-item">Carbon Footprint</a>
+            <a href="/cbam?lang=en" class="nav-item active">CBAM Report</a>
         </div>
     </div>
 
     <!-- Main -->
     <div class="main">
-        <h1 class="page-title">📋 CBAM 合规报告生成</h1>
-        <p class="page-subtitle">基于欧盟 CBAM 规范，自动计算碳排放并生成合规 XML 报告</p>
+        <h1 class="page-title">📋 CBAM Compliance Report Generator</h1>
+        <p class="page-subtitle">Based on EU CBAM regulations, automatically calculate carbon emissions and generate compliant XML reports</p>
 
         <!-- Steps -->
         <div class="steps">
             <div class="step active">
                 <span class="step-num">1</span>
-                <span>企业信息</span>
+                <span>Company Info</span>
             </div>
             <div class="step">
                 <span class="step-num">2</span>
-                <span>生产数据</span>
+                <span>Production Data</span>
             </div>
             <div class="step">
                 <span class="step-num">3</span>
-                <span>排放数据</span>
+                <span>Emissions Data</span>
             </div>
             <div class="step">
                 <span class="step-num">4</span>
-                <span>生成报告</span>
+                <span>Generate Report</span>
             </div>
         </div>
 
         <!-- Form -->
-        <form method="POST" action="/cbam" id="cbamForm">
+        <form method="POST" action="/cbam?lang=en" id="cbamForm">
             <!-- Company Info Section -->
             <div class="form-card">
                 <div class="section-title">
                     <div class="section-icon">🏢</div>
-                    企业与设施信息
+                    Company & Facility Information
                 </div>
 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">公司名称 <span class="required">*</span></label>
-                        <input type="text" name="company_name" class="form-input" placeholder="例如：Steel Malaysia Sdn Bhd" required>
+                        <label class="form-label">Company Name <span class="required">*</span></label>
+                        <input type="text" name="company_name" class="form-input" placeholder="e.g.: Steel Malaysia Sdn Bhd" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">设施ID <span class="required">*</span></label>
-                        <input type="text" name="facility_id" class="form-input" placeholder="例如：MY-SM-2024-001" required>
+                        <label class="form-label">Facility ID <span class="required">*</span></label>
+                        <input type="text" name="facility_id" class="form-input" placeholder="e.g.: MY-SM-2024-001" required>
                     </div>
                     <div class="form-group full">
-                        <label class="form-label">设施地址 <span class="required">*</span></label>
-                        <input type="text" name="facility_address" class="form-input" placeholder="完整地址，包含城市和州" required>
+                        <label class="form-label">Facility Address <span class="required">*</span></label>
+                        <input type="text" name="facility_address" class="form-input" placeholder="Full address including city and state" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">联系人姓名</label>
-                        <input type="text" name="contact_person" class="form-input" placeholder="联系人姓名">
+                        <label class="form-label">Contact Person</label>
+                        <input type="text" name="contact_person" class="form-input" placeholder="Contact name">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">联系人邮箱</label>
+                        <label class="form-label">Contact Email</label>
                         <input type="email" name="contact_email" class="form-input" placeholder="email@example.com">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">报告期 <span class="required">*</span></label>
+                        <label class="form-label">Reporting Period <span class="required">*</span></label>
                         <select name="reporting_period" class="form-input" required>
-                            <option value="2026-Q1">2026-Q1 (第一季度)</option>
-                            <option value="2026-Q2">2026-Q2 (第二季度)</option>
-                            <option value="2026-Q3">2026-Q3 (第三季度)</option>
-                            <option value="2026-Q4">2026-Q4 (第四季度)</option>
-                            <option value="2025-Q4">2025-Q4 (第四季度)</option>
-                            <option value="2025-Q3">2025-Q3 (第三季度)</option>
+                            <option value="2026-Q1">2026-Q1 (Q1)</option>
+                            <option value="2026-Q2">2026-Q2 (Q2)</option>
+                            <option value="2026-Q3">2026-Q3 (Q3)</option>
+                            <option value="2026-Q4">2026-Q4 (Q4)</option>
+                            <option value="2025-Q4">2025-Q4 (Q4)</option>
+                            <option value="2025-Q3">2025-Q3 (Q3)</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">生产周期</label>
-                        <input type="text" name="production_period" class="form-input" placeholder="例如：2026-01-01 to 2026-03-31">
+                        <label class="form-label">Production Period</label>
+                        <input type="text" name="production_period" class="form-input" placeholder="e.g.: 2026-01-01 to 2026-03-31">
                     </div>
                 </div>
             </div>
@@ -647,36 +647,36 @@
             <div class="form-card">
                 <div class="section-title">
                     <div class="section-icon">🏭</div>
-                    生产数据
+                    Production Data
                 </div>
 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">产品类型 <span class="required">*</span></label>
+                        <label class="form-label">Product Type <span class="required">*</span></label>
                         <select name="product_type" class="form-input" required>
-                            <option value="">请选择产品类型</option>
-                            <option value="steel">钢铁 (Steel Products)</option>
-                            <option value="aluminum">铝 (Aluminum Products)</option>
-                            <option value="cement">水泥 (Cement)</option>
-                            <option value="fertilizer">化肥 (Fertilizer)</option>
-                            <option value="hydrogen">氢能 (Hydrogen)</option>
-                            <option value="electricity">电力 (Electricity)</option>
+                            <option value="">Select product type</option>
+                            <option value="steel">Steel Products</option>
+                            <option value="aluminum">Aluminum Products</option>
+                            <option value="cement">Cement</option>
+                            <option value="fertilizer">Fertilizer</option>
+                            <option value="hydrogen">Hydrogen</option>
+                            <option value="electricity">Electricity</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">产品描述</label>
-                        <input type="text" name="product_description" class="form-input" placeholder="例如：Hot rolled steel coils">
+                        <label class="form-label">Product Description</label>
+                        <input type="text" name="product_description" class="form-input" placeholder="e.g.: Hot rolled steel coils">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">产量 <span class="required">*</span></label>
+                        <label class="form-label">Production Quantity <span class="required">*</span></label>
                         <input type="number" name="quantity" class="form-input" placeholder="0" min="0" step="0.01" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">单位</label>
+                        <label class="form-label">Unit</label>
                         <select name="unit" class="form-input">
-                            <option value="tonnes">吨 (tonnes)</option>
-                            <option value="MWh">兆瓦时 (MWh) - 电力</option>
-                            <option value="kg">千克 (kg)</option>
+                            <option value="tonnes">Tonnes</option>
+                            <option value="MWh">MWh - Electricity</option>
+                            <option value="kg">kg</option>
                         </select>
                     </div>
                 </div>
@@ -684,14 +684,14 @@
                 <!-- OCR Integration -->
                 <div class="ocr-section">
                     <div class="ocr-title">
-                        <span>📷</span> 从票据自动提取数据
+                        <span>📷</span> Auto Extract Data from Receipts
                     </div>
                     <div class="ocr-upload" onclick="document.getElementById('ocrInput').click()">
                         <div class="ocr-icon">📄</div>
-                        <div>点击上传电费单或燃料发票</div>
-                        <div class="ocr-hint">支持 JPG、PNG、PDF，自动识别关键数据</div>
+                        <div>Click to upload electricity bill or fuel invoice</div>
+                        <div class="ocr-hint">Supports JPG, PNG, PDF, auto-recognizes key data</div>
                     </div>
-                    <input type="file" id="ocrInput" accept="image/*,.pdf" style="display:none;" onchange="alert('票据识别功能开发中，请手动填写数据')">
+                    <input type="file" id="ocrInput" accept="image/*,.pdf" style="display:none;" onchange="alert('Receipt OCR feature coming soon, please fill in data manually')">
                 </div>
             </div>
 
@@ -699,42 +699,42 @@
             <div class="form-card">
                 <div class="section-title">
                     <div class="section-icon">💨</div>
-                    碳排放数据
+                    Carbon Emission Data
                 </div>
 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">用电量 (kWh)</label>
+                        <label class="form-label">Electricity Consumption (kWh)</label>
                         <input type="number" name="electricity_kwh" class="form-input" placeholder="0" min="0" step="0.01">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">柴油消耗 (升)</label>
+                        <label class="form-label">Diesel Consumption (liters)</label>
                         <input type="number" name="diesel_litres" class="form-input" placeholder="0" min="0" step="0.01">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">天然气消耗 (立方米)</label>
+                        <label class="form-label">Natural Gas Consumption (m³)</label>
                         <input type="number" name="natural_gas_m3" class="form-input" placeholder="0" min="0" step="0.01">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">LPG 消耗 (kg)</label>
+                        <label class="form-label">LPG Consumption (kg)</label>
                         <input type="number" name="lpg_kg" class="form-input" placeholder="0" min="0" step="0.01">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">煤炭消耗 (kg)</label>
+                        <label class="form-label">Coal Consumption (kg)</label>
                         <input type="number" name="coal_kg" class="form-input" placeholder="0" min="0" step="0.01">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">燃油消耗 (升)</label>
+                        <label class="form-label">Fuel Oil Consumption (liters)</label>
                         <input type="number" name="fuel_oil_litres" class="form-input" placeholder="0" min="0" step="0.01">
                     </div>
                 </div>
 
                 <div class="info-box" style="margin-top: 16px;">
-                    <div class="info-title">💡 排放因子说明</div>
+                    <div class="info-title">💡 Emission Factor Notes</div>
                     <div class="info-text">
-                        系统将使用马来西亚本地化排放因子计算：
-                        电网因子 0.7 kg CO₂/kWh（马来西亚能源委员会数据）+ IPCC AR6 燃料因子。
-                        若不填写数据，系统将使用 CBAM 默认值进行估算。
+                        The system uses Malaysian localized emission factors for calculation:
+                        Grid factor 0.7 kg CO₂/kWh (Malaysian Energy Commission data) + IPCC AR6 fuel factors.
+                        If data is not provided, the system will use CBAM default values for estimation.
                     </div>
                 </div>
             </div>
@@ -743,34 +743,34 @@
             <div class="form-card">
                 <div class="section-title">
                     <div class="section-icon">🌍</div>
-                    欧盟进口商信息
+                    EU Importer Information
                 </div>
 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">EU 进口商名称</label>
-                        <input type="text" name="eu_importer" class="form-input" placeholder="欧盟进口商公司名称">
+                        <label class="form-label">EU Importer Name</label>
+                        <input type="text" name="eu_importer" class="form-input" placeholder="EU importer company name">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">进口国</label>
+                        <label class="form-label">Import Country</label>
                         <select name="import_country" class="form-input">
-                            <option value="">请选择</option>
-                            <option value="DE">德国 (Germany)</option>
-                            <option value="FR">法国 (France)</option>
-                            <option value="NL">荷兰 (Netherlands)</option>
-                            <option value="IT">意大利 (Italy)</option>
-                            <option value="BE">比利时 (Belgium)</option>
-                            <option value="ES">西班牙 (Spain)</option>
-                            <option value="PL">波兰 (Poland)</option>
-                            <option value="AT">奥地利 (Austria)</option>
+                            <option value="">Select</option>
+                            <option value="DE">Germany</option>
+                            <option value="FR">France</option>
+                            <option value="NL">Netherlands</option>
+                            <option value="IT">Italy</option>
+                            <option value="BE">Belgium</option>
+                            <option value="ES">Spain</option>
+                            <option value="PL">Poland</option>
+                            <option value="AT">Austria</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">进口数量 (吨)</label>
+                        <label class="form-label">Import Quantity (tonnes)</label>
                         <input type="number" name="import_quantity" class="form-input" placeholder="0" min="0">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">EU ETS 碳价 (EUR/吨)</label>
+                        <label class="form-label">EU ETS Carbon Price (EUR/tonne)</label>
                         <input type="number" name="eu_carbon_price" class="form-input" placeholder="85" value="85" min="0">
                     </div>
                 </div>
@@ -779,10 +779,10 @@
             <!-- Submit -->
             <div class="action-bar">
                 <button type="submit" class="btn btn-primary">
-                    <span>📊</span> 计算碳排放并生成报告
+                    <span>📊</span> Calculate Emissions & Generate Report
                 </button>
                 <button type="button" class="btn btn-secondary" onclick="resetForm()">
-                    <span>🔄</span> 重置
+                    <span>🔄</span> Reset
                 </button>
             </div>
         </form>
@@ -792,17 +792,17 @@
         <div class="result-card show">
             <div class="emissions-grid">
                 <div class="emission-item">
-                    <div class="emission-label">Scope 1 (直接排放)</div>
+                    <div class="emission-label">Scope 1 (Direct Emissions)</div>
                     <div class="emission-value">{{ result.scope1_kg }}</div>
                     <div class="emission-unit">kg CO₂</div>
                 </div>
                 <div class="emission-item">
-                    <div class="emission-label">Scope 2 (电力)</div>
+                    <div class="emission-label">Scope 2 (Electricity)</div>
                     <div class="emission-value">{{ result.scope2_kg }}</div>
                     <div class="emission-unit">kg CO₂</div>
                 </div>
                 <div class="emission-item">
-                    <div class="emission-label">总隐含排放</div>
+                    <div class="emission-label">Total Embedded Emissions</div>
                     <div class="emission-value">{{ result.total_kg }}</div>
                     <div class="emission-unit">kg CO₂</div>
                 </div>
@@ -810,15 +810,15 @@
 
             <div class="cert-info">
                 <div class="cert-row">
-                    <span>单位产品隐含排放</span>
-                    <span>{{ result.per_tonne }} kg CO₂/吨</span>
+                    <span>Embedded Emissions per Tonne</span>
+                    <span>{{ result.per_tonne }} kg CO₂/tonne</span>
                 </div>
                 <div class="cert-row">
-                    <span>CBAM 证书需求</span>
-                    <span>{{ result.certificates_needed }} 个</span>
+                    <span>CBAM Certificates Needed</span>
+                    <span>{{ result.certificates_needed }}</span>
                 </div>
                 <div class="cert-row">
-                    <span>预计 CBAM 成本 (@ €{{ result.carbon_price }}/吨)</span>
+                    <span>Estimated CBAM Cost (@ €{{ result.carbon_price }}/tonne)</span>
                     <span>€{{ result.cost_eur }}</span>
                 </div>
             </div>
@@ -828,21 +828,21 @@
             <div class="result-header">
                 <div class="result-title">
                     <div class="result-title-icon">✓</div>
-                    报告已生成
+                    Report Generated
                 </div>
             </div>
 
             <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 16px;">
-                您的 CBAM 合规报告已成功生成，可下载以下格式：
+                Your CBAM compliance report has been successfully generated. You can download the following formats:
             </p>
 
             <div class="download-links">
                 <a href="{{ result.xml_path }}" class="download-link" download>
-                    <span>📄</span> 下载 CBAM XML 报告
+                    <span>📄</span> Download CBAM XML Report
                 </a>
                 {% if result.pdf_path %}
                 <a href="{{ result.pdf_path }}" class="download-link" download>
-                    <span>📑</span> 下载 PDF 报告
+                    <span>📑</span> Download PDF Report
                 </a>
                 {% endif %}
             </div>
@@ -851,13 +851,13 @@
 
         <!-- Info -->
         <div class="info-box">
-            <div class="info-title">⚠️ CBAM 重要提示</div>
+            <div class="info-title">⚠️ CBAM Important Notice</div>
             <div class="info-text">
-                • 2026 年 1 月 1 日起，欧盟 CBAM 正式生效，进口商必须购买 CBAM 证书<br>
-                • 每吨 CO₂ 未缴证书将罚款 100 欧元<br>
-                • 2027 年 9 月 30 日前须提交 2026 年完整年度的 CBAM 申报<br>
-                • 本系统生成的 XML 报告可供欧盟进口商使用<br>
-                • 最终申报前需经第三方验证机构核实
+                • From January 1, 2026, EU CBAM officially takes effect, importers must purchase CBAM certificates<br>
+                • €100 fine per tonne of CO₂ for unpaid certificates<br>
+                • CBAM declarations for the full year 2026 must be submitted by September 30, 2027<br>
+                • XML reports generated by this system can be used by EU importers<br>
+                • Final declarations require verification by third-party verification bodies
             </div>
         </div>
     </div>
@@ -872,7 +872,7 @@
             const quantity = parseFloat(document.querySelector('[name="quantity"]').value);
             if (!quantity || quantity <= 0) {
                 e.preventDefault();
-                alert('请输入有效的产量数值');
+                alert('Please enter a valid production quantity');
             }
         });
     </script>

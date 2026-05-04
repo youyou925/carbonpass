@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if lang == 'zh' %}注册 - CarbonPass{% else %}Register - CarbonPass{% endif %}</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --primary: #0B4D3E; --primary-light: #14B8A6; --primary-dark: #083A2E;
+            --accent: #14B8A6; --warning: #F59E0B; --error: #DC2626; --success: #16A34A;
+            --bg: #F5F7F2; --card-bg: #FFFFFF;
+            --text-primary: #1E293B; --text-secondary: #64748B; --text-hint: #94A3B8;
+            --border: #E2E8F0; --radius: 8px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+        }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Microsoft YaHei', sans-serif; background: var(--bg); min-height: 100vh; color: var(--text-primary); }
+        .lang-switch { position: fixed; top:12px; left:12px; z-index:1000; display:flex; background:var(--card-bg); border-radius:20px; box-shadow:var(--shadow); overflow:hidden; }
+        .lang-btn { padding:6px 12px; font-size:11px; font-weight:600; color:var(--text-secondary); text-decoration:none; transition:all .2s; }
+        .lang-btn:hover { background:var(--bg); }
+        .lang-btn.active { background:var(--primary); color:white; }
+        .header { background:var(--card-bg); padding:16px 24px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); }
+        .logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+        .logo-icon { width:36px; height:36px; background:linear-gradient(135deg, var(--primary), var(--accent)); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:16px; }
+        .logo-text { font-size:18px; font-weight:700; color:var(--text-primary); }
+        .logo-text span { color:var(--primary); }
+        .main { max-width:520px; margin:0 auto; padding:40px 24px; }
+        .card { background:var(--card-bg); border-radius:16px; box-shadow:var(--shadow); padding:32px; }
+        .card-title { font-size:22px; font-weight:700; text-align:center; margin-bottom:4px; }
+        .card-subtitle { font-size:13px; color:var(--text-secondary); text-align:center; margin-bottom:24px; }
+        .form-group { margin-bottom:16px; }
+        .form-label { display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:6px; }
+        .form-label .required { color:var(--error); }
+        .form-input { width:100%; padding:10px 14px; border:1.5px solid var(--border); border-radius:var(--radius); font-size:14px; color:var(--text-primary); background:var(--bg); transition:border-color .2s; outline:none; }
+        .form-input:focus { border-color:var(--primary); }
+        .btn-primary { width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:var(--radius); font-size:15px; font-weight:600; cursor:pointer; transition:all .2s; }
+        .btn-primary:hover { background:var(--primary-dark); }
+        .form-footer { text-align:center; margin-top:16px; font-size:13px; color:var(--text-secondary); }
+        .form-footer a { color:var(--primary); text-decoration:none; font-weight:600; }
+        .flash { padding:10px 14px; border-radius:var(--radius); margin-bottom:16px; font-size:13px; }
+        .flash.error { background:#FEF2F2; color:var(--error); border:1px solid #FECACA; }
+        .flash.success { background:#F0FDF4; color:var(--success); border:1px solid #BBF7D0; }
+        .flash.info { background:#EFF6FF; color:#2563EB; border:1px solid #BFDBFE; }
+        .flash.warning { background:#FFFBEB; color:var(--warning); border:1px solid #FDE68A; }
+    </style>
+</head>
+<body>
+    <div class="lang-switch">
+        <a href="/register?lang=zh" class="lang-btn {% if lang == 'zh' %}active{% endif %}">中文</a>
+        <a href="/register?lang=en" class="lang-btn {% if lang == 'en' %}active{% endif %}">EN</a>
+    </div>
+    <div class="header">
+        <a href="/" class="logo">
+            <div class="logo-icon">C</div>
+            <div class="logo-text">Carbon<span>Pass</span></div>
+        </a>
+    </div>
+    <div class="main">
+        <div class="card">
+            <div class="card-title">{% if lang == 'zh' %}创建账户{% else %}Create Account{% endif %}</div>
+            <div class="card-subtitle">{% if lang == 'zh' %}开始您的碳排放合规之旅{% else %}Start your carbon compliance journey{% endif %}</div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <div class="form-group">
+                    <label class="form-label">{% if lang == 'zh' %}姓名{% else %}Name{% endif %} <span class="required">*</span></label>
+                    <input type="text" name="name" class="form-input" required placeholder="{% if lang == 'zh' %}请输入您的姓名{% else %}Your full name{% endif %}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">{% if lang == 'zh' %}电子邮箱{% else %}Email{% endif %} <span class="required">*</span></label>
+                    <input type="email" name="email" class="form-input" required placeholder="email@example.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">{% if lang == 'zh' %}密码{% else %}Password{% endif %} <span class="required">*</span></label>
+                    <input type="password" name="password" class="form-input" required minlength="8" placeholder="{% if lang == 'zh' %}至少8位，含字母和数字{% else %}Min 8 chars, letters & numbers{% endif %}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">{% if lang == 'zh' %}确认密码{% else %}Confirm Password{% endif %} <span class="required">*</span></label>
+                    <input type="password" name="confirm_password" class="form-input" required placeholder="{% if lang == 'zh' %}再次输入密码{% else %}Re-enter password{% endif %}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">{% if lang == 'zh' %}职位（选填）{% else %}Position (optional){% endif %}</label>
+                    <input type="text" name="position" class="form-input" placeholder="{% if lang == 'zh' %}例如：财务主管{% else %}e.g. Finance Manager{% endif %}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">{% if lang == 'zh' %}手机号码（选填）{% else %}Phone (optional){% endif %}</label>
+                    <input type="text" name="phone" class="form-input" placeholder="+60 xxx xxxx">
+                </div>
+                <button type="submit" class="btn-primary">{% if lang == 'zh' %}注册{% else %}Register{% endif %}</button>
+            </form>
+            <div class="form-footer">
+                {% if lang == 'zh' %}
+                已有账户？<a href="/login">立即登录</a>
+                {% else %}
+                Already have an account? <a href="/login">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

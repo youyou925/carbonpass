@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if lang == 'zh' %}核算详情 - CarbonPass{% else %}Result Details - CarbonPass{% endif %}</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;700&display=swap');
+        :root { --primary:#0B4D3E; --primary-dark:#083A2E; --accent:#14B8A6; --success:#16A34A; --warning:#F59E0B; --error:#DC2626; --bg:#F5F7F2; --card-bg:#FFF; --text-primary:#1E293B; --text-secondary:#64748B; --text-hint:#94A3B8; --border:#E2E8F0; --radius:8px; --shadow:0 2px 12px rgba(0,0,0,0.08); }
+        body { font-family:'Inter',-apple-system,'Microsoft YaHei',sans-serif; background:var(--bg); color:var(--text-primary); }
+        .topbar { background:var(--card-bg); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); }
+        .logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+        .logo-icon { width:32px; height:32px; background:linear-gradient(135deg,var(--primary),var(--accent)); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:14px; }
+        .logo-text { font-size:16px; font-weight:700; }
+        .logo-text span { color:var(--primary); }
+        .main { max-width:800px; margin:0 auto; padding:24px; }
+        .period-label { font-size:12px; color:var(--text-secondary); margin-bottom:4px; }
+        .page-title { font-size:22px; font-weight:700; margin-bottom:20px; }
+
+        /* Summary Cards */
+        .summary-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px; }
+        .summary-card { background:var(--card-bg); border-radius:12px; padding:24px; box-shadow:var(--shadow); text-align:center; }
+        .summary-card.scope1 { border-top:4px solid var(--primary); }
+        .summary-card.scope2 { border-top:4px solid var(--accent); }
+        .summary-card.total { border-top:4px solid var(--warning); }
+        .summary-label { font-size:12px; color:var(--text-secondary); margin-bottom:4px; }
+        .summary-value { font-size:32px; font-weight:700; }
+        .summary-value.scope1 { color:var(--primary); }
+        .summary-value.scope2 { color:var(--accent); }
+        .summary-value.total { color:var(--warning); }
+        .summary-unit { font-size:12px; color:var(--text-hint); }
+
+        /* Product Intensities - CBAM Hero Metric */
+        .intensity-card { background:var(--card-bg); border-radius:12px; padding:24px; box-shadow:var(--shadow); margin-bottom:24px; border-left:4px solid var(--primary); }
+        .intensity-title { font-size:13px; font-weight:600; margin-bottom:4px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.04em; }
+        .intensity-subtitle { font-size:12px; color:var(--text-hint); margin-bottom:20px; }
+        .intensity-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:16px; }
+        .intensity-item { background:var(--bg); border-radius:10px; padding:20px; text-align:center; border:1.5px solid transparent; transition:border-color .2s; }
+        .intensity-item:hover { border-color:var(--primary); }
+        .intensity-product { font-size:13px; color:var(--text-secondary); margin-bottom:8px; font-weight:500; }
+        .intensity-value { font-size:42px; font-weight:700; color:var(--primary); font-family:'Outfit',sans-serif; line-height:1; }
+        .intensity-unit { font-size:12px; color:var(--text-hint); margin-top:6px; }
+        .intensity-attributed { font-size:12px; color:var(--text-secondary); margin-top:8px; padding-top:8px; border-top:1px solid var(--border); }
+        .eu-badge { display:inline-block; margin-top:8px; padding:2px 8px; background:#EFF6FF; color:#1D4ED8; border-radius:10px; font-size:10px; font-weight:700; }
+
+        /* Calculation Details */
+        .detail-card { background:var(--card-bg); border-radius:12px; box-shadow:var(--shadow); margin-bottom:24px; overflow:hidden; }
+        .detail-header { padding:16px 20px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
+        .detail-header:hover { background:#FAFAFA; }
+        .detail-title { font-size:14px; font-weight:600; }
+        .detail-toggle { color:var(--primary); font-size:20px; }
+        .detail-body { padding:0 20px 20px; display:none; }
+        .detail-body.open { display:block; }
+        .detail-step { padding:12px; margin-bottom:8px; background:var(--bg); border-radius:var(--radius); font-size:13px; font-family:monospace; line-height:1.6; }
+
+        /* Buttons */
+        .action-row { display:flex; gap:12px; margin-bottom:24px; }
+        .btn { padding:12px 24px; border-radius:var(--radius); font-size:14px; font-weight:600; cursor:pointer; border:none; text-decoration:none; display:inline-flex; align-items:center; gap:8px; }
+        .btn-primary { background:var(--primary); color:white; }
+        .btn-primary:hover { background:var(--primary-dark); }
+        .btn-outline { background:transparent; color:var(--primary); border:1.5px solid var(--primary); }
+        .btn-outline:hover { background:var(--primary); color:white; }
+
+        /* Section */
+        .section-title { font-size:14px; font-weight:600; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+        .data-table { width:100%; border-collapse:collapse; font-size:13px; margin-bottom:12px; }
+        .data-table th { text-align:left; padding:8px 12px; background:var(--bg); font-weight:600; font-size:11px; color:var(--text-secondary); }
+        .data-table td { padding:8px 12px; border-bottom:1px solid var(--border); }
+
+        .factors-section { margin-top:12px; }
+        .factor-item { padding:6px 0; font-size:12px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; }
+        .factor-item:last-child { border-bottom:none; }
+
+        .badge { padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600; }
+        .badge.low { background:#D1FAE5; color:#065F46; }
+        .badge.high { background:#FEF2F2; color:#991B1B; }
+
+        @media (max-width:640px) { .summary-grid { grid-template-columns:1fr; } .intensity-grid { grid-template-columns:1fr; } .action-row { flex-direction:column; } }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="/dashboard" class="logo"><div class="logo-icon">C</div><div class="logo-text">Carbon<span>Pass</span></div></a>
+        <div style="display:flex; gap:12px; align-items:center;">
+            <span style="font-size:13px; color:var(--text-secondary);">{{ period.label(lang) }}</span>
+            <a href="/results" style="font-size:13px; color:var(--primary); text-decoration:none;">← {% if lang == 'zh' %}返回{% else %}Back{% endif %}</a>
+        </div>
+    </div>
+    <div class="main">
+        <div class="period-label">{{ period.label(lang) }} {% if lang == 'zh' %}核算报告{% else %}Calculation Report{% endif %}</div>
+        <h1 class="page-title">{% if lang == 'zh' %}碳排放核算结果{% else %}Emission Calculation Results{% endif %}</h1>
+
+        <!-- Summary -->
+        <div class="summary-grid">
+            <div class="summary-card scope1">
+                <div class="summary-label">Scope 1</div>
+                <div class="summary-value scope1">{{ calc.scope1_tonnes }}</div>
+                <div class="summary-unit">tonnes CO₂e</div>
+            </div>
+            <div class="summary-card scope2">
+                <div class="summary-label">Scope 2</div>
+                <div class="summary-value scope2">{{ calc.scope2_tonnes }}</div>
+                <div class="summary-unit">tonnes CO₂e</div>
+            </div>
+            <div class="summary-card total">
+                <div class="summary-label">{% if lang == 'zh' %}总排放{% else %}Total{% endif %}</div>
+                <div class="summary-value total">{{ calc.total_tonnes }}</div>
+                <div class="summary-unit">tonnes CO₂e</div>
+            </div>
+        </div>
+
+        <!-- Product Intensities (CBAM Core) -->
+        <div class="intensity-card">
+            <div class="intensity-title">{% if lang == 'zh' %}产品排放强度（SEE）{% else %}Specific Embedded Emissions (SEE){% endif %}</div>
+            <div class="intensity-subtitle">{% if lang == 'zh' %}CBAM 核心指标 · 等比例分配法{% else %}CBAM core metric · Proportional physical allocation{% endif %}</div>
+            <div class="intensity-grid">
+                {% for pei in intensities %}
+                <div class="intensity-item">
+                    <div class="intensity-product">{{ pei.product_name }}</div>
+                    <div class="intensity-value">{{ "%.4f"|format(pei.intensity) }}</div>
+                    <div class="intensity-unit">tCO₂e / {{ pei.unit }}</div>
+                    <div class="intensity-attributed">
+                        {% if lang == 'zh' %}归因排放{% else %}Attributed{% endif %}: <strong>{{ "%.2f"|format(pei.attributed_emissions) }}</strong> tCO₂e
+                    </div>
+                    {% if pei.export_to_eu %}<div class="eu-badge">EU CBAM</div>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-row">
+            <form method="POST" action="/reports/generate/{{ period.id }}">
+                <input type="hidden" name="report_type" value="cbam">
+                <button type="submit" class="btn btn-primary">
+                    📄 {% if lang == 'zh' %}生成 CBAM 报告{% else %}Generate CBAM Report{% endif %}
+                </button>
+            </form>
+            <form method="POST" action="/reports/generate/{{ period.id }}">
+                <input type="hidden" name="report_type" value="ghg">
+                <input type="hidden" name="report_lang" value="{{ lang }}">
+                <button type="submit" class="btn btn-outline">
+                    📋 {% if lang == 'zh' %}生成 GHG 摘要报告{% else %}Generate GHG Summary{% endif %}
+                </button>
+            </form>
+            <a href="/data-entry/{{ period.id }}/step1" class="btn btn-outline">
+                ✏️ {% if lang == 'zh' %}编辑数据{% else %}Edit Data{% endif %}
+            </a>
+        </div>
+
+        <!-- Calculation Details (Expandable) -->
+        <div class="detail-card">
+            <div class="detail-header" onclick="toggleDetails()">
+                <div class="detail-title">🔍 {% if lang == 'zh' %}计算详情{% else %}Calculation Details{% endif %}</div>
+                <span class="detail-toggle" id="toggleIcon">▶</span>
+            </div>
+            <div class="detail-body" id="detailBody">
+
+                <!-- Scope 1 Details -->
+                {% if details.get('scope1_details') %}
+                <div class="section-title">{% if lang == 'zh' %}Scope 1 计算（直接排放）{% else %}Scope 1 Calculation (Direct Emissions){% endif %}</div>
+                <div class="detail-step">
+                    {% if lang == 'zh' %}
+                    公式：燃料排放量(tonnes CO₂e) = 燃料消耗量 × 排放因子 / 1000<br>
+                    {% else %}
+                    Formula: Fuel emissions (tonnes CO₂e) = Amount × Emission Factor / 1000<br>
+                    {% endif %}
+                </div>
+                <table class="data-table">
+                    <tr><th>{% if lang == 'zh' %}排放源{% else %}Source{% endif %}</th><th>{% if lang == 'zh' %}消耗量{% else %}Amount{% endif %}</th><th>{% if lang == 'zh' %}因子{% else %}Factor{% endif %}</th><th>{% if lang == 'zh' %}排放量{% else %}Emissions{% endif %}</th></tr>
+                    {% for d in details.get('scope1_details', []) %}
+                    <tr>
+                        <td>{{ d.get('label', d.get('name', '')) }}</td>
+                        <td>{{ d.get('amount', '') }} {{ d.get('unit', '') }}</td>
+                        <td>{{ d.get('factor', '') }} {{ d.get('factor_unit', '') }}</td>
+                        <td><strong>{{ d.get('emissions_tonne', 0) }}</strong> tonnes</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% endif %}
+
+                <!-- Scope 2 Details -->
+                {% if details.get('scope2_details') %}
+                <div class="section-title">{% if lang == 'zh' %}Scope 2 计算（外购电力）{% else %}Scope 2 Calculation (Purchased Electricity){% endif %}</div>
+                <div class="detail-step">
+                    {% if lang == 'zh' %}
+                    公式：电力排放(tonnes CO₂e) = 电力消耗(kWh) × 电网因子(kg CO₂/kWh) / 1000<br>
+                    电网因子来源：{{ calc.grid_factor_source }}<br>
+                    使用电网因子：{{ calc.grid_factor_used }} kg CO₂/kWh
+                    {% else %}
+                    Formula: Electricity (tonnes CO₂e) = kWh × Grid Factor (kg CO₂/kWh) / 1000<br>
+                    Grid Factor Source: {{ calc.grid_factor_source }}<br>
+                    Grid Factor Used: {{ calc.grid_factor_used }} kg CO₂/kWh
+                    {% endif %}
+                </div>
+                <table class="data-table">
+                    <tr><th>{% if lang == 'zh' %}排放源{% else %}Source{% endif %}</th><th>{% if lang == 'zh' %}消耗量{% else %}Amount{% endif %}</th><th>{% if lang == 'zh' %}因子{% else %}Factor{% endif %}</th><th>{% if lang == 'zh' %}排放量{% else %}Emissions{% endif %}</th></tr>
+                    {% for d in details.get('scope2_details', []) %}
+                    <tr>
+                        <td>{{ d.get('label', d.get('name', '')) }}</td>
+                        <td>{{ d.get('amount', '') }} {{ d.get('unit', '') }}</td>
+                        <td>{{ d.get('factor', '') }} {{ d.get('factor_unit', '') }}</td>
+                        <td><strong>{{ d.get('emissions_tonne', 0) }}</strong> tonnes</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% endif %}
+
+                <!-- Other Emissions -->
+                {% if details.get('other_emissions_tonnes', 0) > 0 %}
+                <div class="section-title">{% if lang == 'zh' %}其他排放{% else %}Other Emissions{% endif %}</div>
+                <p style="font-size:13px;">{{ details.get('other_emissions_tonnes', 0) }} tonnes CO₂e</p>
+                {% endif %}
+
+                <!-- Product Allocation -->
+                <div class="section-title">{% if lang == 'zh' %}产品排放分配（等比例分配法）{% else %}Product Allocation (Proportional Method){% endif %}</div>
+                <div class="detail-step">
+                    {% if lang == 'zh' %}
+                    公式：产品归因排放 = 总排放 × (产品产量 / 总产量)<br>
+                    公式：排放强度 = 产品归因排放 / 产品产量
+                    {% else %}
+                    Formula: Attributed = Total × (Product Amount / Total Production)<br>
+                    Formula: Intensity = Attributed Emissions / Product Amount
+                    {% endif %}
+                </div>
+                <table class="data-table">
+                    <tr><th>{% if lang == 'zh' %}产品{% else %}Product{% endif %}</th><th>{% if lang == 'zh' %}产量{% else %}Amount{% endif %}</th><th>{% if lang == 'zh' %}归因排放{% else %}Attributed{% endif %}</th><th>{% if lang == 'zh' %}排放强度{% else %}Intensity{% endif %}</th></tr>
+                    {% for pei in intensities %}
+                    <tr>
+                        <td>{{ pei.product_name }}</td>
+                        <td>{{ pei.amount }} {{ pei.unit }}</td>
+                        <td>{{ pei.attributed_emissions }} tonnes</td>
+                        <td><strong>{{ pei.intensity }}</strong> tonnes/{{ pei.unit }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+
+                <!-- Factors Used -->
+                {% if factors %}
+                <div class="section-title">{% if lang == 'zh' %}使用的排放因子{% else %}Emission Factors Used{% endif %}</div>
+                <div class="factors-section">
+                    {% for f in factors %}
+                    <div class="factor-item">
+                        <span><strong>{{ f.get('type', '') }}</strong>: {{ f.get('value', '') }} {{ f.get('unit', '') }}</span>
+                        <span style="color:var(--text-hint);">{{ f.get('source', '') }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Badges -->
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:24px;">
+            <span style="font-size:12px; color:var(--text-secondary);">{% if lang == 'zh' %}不确定度: {% else %}Uncertainty: {% endif %}±{{ calc.uncertainty_pct }}%</span>
+            <span style="font-size:12px; color:var(--text-secondary);">{% if lang == 'zh' %}方法论: {% else %}Methodology: {% endif %}{{ calc.methodology }}</span>
+            <span style="font-size:12px; color:var(--text-secondary);">{% if lang == 'zh' %}数据质量: {% else %}Data Quality: {% endif %}{{ calc.data_quality }}</span>
+        </div>
+    </div>
+
+    <script>
+        function toggleDetails() {
+            const body = document.getElementById('detailBody');
+            const icon = document.getElementById('toggleIcon');
+            body.classList.toggle('open');
+            icon.textContent = body.classList.contains('open') ? '▼' : '▶';
+        }
+    </script>
+</body>
+</html>

@@ -1,20 +1,18 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CarbonPass - 马来西亚出口制造企业碳排放核算与CBAM合规平台</title>
+    <title>CarbonPass - Carbon Accounting & CBAM Compliance for Malaysian Manufacturers</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         :root { --primary:#0B4D3E; --primary-dark:#083A2E; --accent:#14B8A6; --bg:#F5F7F2; --card-bg:#FFF; --text-primary:#1E293B; --text-secondary:#64748B; --text-hint:#94A3B8; --border:#E2E8F0; --shadow:0 8px 32px rgba(0,0,0,0.08); --shadow-hover:0 12px 40px rgba(0,0,0,0.12); }
         body { font-family:'Inter',-apple-system,'Microsoft YaHei',sans-serif; background:var(--bg); min-height:100vh; color:var(--text-primary); }
-
         .lang-switch { position:fixed; top:12px; left:12px; z-index:1000; display:flex; background:var(--card-bg); border-radius:20px; box-shadow:var(--shadow); overflow:hidden; }
         .lang-btn { padding:8px 14px; font-size:12px; font-weight:600; color:var(--text-secondary); text-decoration:none; transition:all 0.2s; border:none; cursor:pointer; background:transparent; }
         .lang-btn:hover { background:var(--bg); }
         .lang-btn.active { background:var(--primary); color:white; }
-
-        .header { background:var(--card-bg); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; }
+        .header { background:var(--card-bg); padding:60px 24px 20px 24px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; }
         .logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
         .logo-icon { width:40px; height:40px; background:linear-gradient(135deg,var(--primary) 0%,var(--accent) 100%); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; color:white; font-weight:bold; }
         .logo-text { font-size:18px; font-weight:700; color:var(--text-primary); }
@@ -22,19 +20,16 @@
         .nav-menu { display:flex; gap:8px; align-items:center; }
         .nav-item { padding:8px 16px; border-radius:8px; text-decoration:none; color:var(--text-secondary); font-size:14px; font-weight:500; transition:all 0.2s; }
         .nav-item:hover { background:var(--bg); color:var(--primary); }
-        .nav-item.active { background:var(--primary); color:white; }
         .login-btn { padding:8px 20px; border-radius:8px; font-size:13px; font-weight:600; color:white; text-decoration:none; background:var(--primary); transition:all 0.2s; }
         .login-btn:hover { background:var(--primary-dark); transform:translateY(-1px); box-shadow:0 4px 12px rgba(11,77,62,0.3); }
-
         .hero { padding:60px 24px 80px; text-align:center; background:linear-gradient(180deg,var(--card-bg) 0%,var(--bg) 100%); }
         .hero-badge { display:inline-block; background:rgba(11,77,62,0.08); border:1px solid rgba(11,77,62,0.2); padding:6px 16px; border-radius:20px; font-size:12px; color:var(--primary); margin-bottom:20px; }
         .hero-title { font-size:36px; font-weight:700; margin-bottom:12px; line-height:1.3; }
-        .hero-title span { background:linear-gradient(135deg,var(--primary) 0%,var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-title span { background:linear-gradient(135deg,var(--primary) 0%,var(--accent) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
         .hero-subtitle { font-size:16px; color:var(--text-secondary); max-width:560px; margin:0 auto 30px; line-height:1.6; }
         .hero-stats { display:flex; justify-content:center; gap:40px; margin-top:40px; }
         .stat-value { font-size:28px; font-weight:700; color:var(--primary); }
         .stat-label { font-size:12px; color:var(--text-hint); margin-top:4px; }
-
         .features { max-width:1000px; margin:-40px auto 40px; padding:0 24px; display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
         .feature-card { background:var(--card-bg); border-radius:20px; box-shadow:var(--shadow); padding:32px 24px; text-align:center; transition:all 0.3s; text-decoration:none; color:inherit; display:block; }
         .feature-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-hover); }
@@ -42,90 +37,82 @@
         .feature-title { font-size:18px; font-weight:600; margin-bottom:8px; }
         .feature-desc { font-size:13px; color:var(--text-secondary); line-height:1.5; margin-bottom:16px; }
         .feature-arrow { font-size:13px; color:var(--primary); font-weight:500; }
-
         .about-section { max-width:700px; margin:0 auto; padding:40px 24px; text-align:center; }
         .about-title { font-size:20px; font-weight:600; margin-bottom:16px; }
         .about-text { font-size:14px; color:var(--text-secondary); line-height:1.8; }
-
         .footer { text-align:center; padding:24px; color:var(--text-hint); font-size:12px; border-top:1px solid var(--border); margin-top:40px; }
-        .footer span { color:var(--primary); }
-
         @media (max-width:768px) { .features { grid-template-columns:1fr; } .hero-title { font-size:28px; } .hero-stats { gap:24px; } .nav-menu { gap:4px; } .nav-item { padding:6px 10px; font-size:12px; } }
     </style>
 </head>
 <body>
     <div class="lang-switch">
-        <a href="/?lang=zh" class="lang-btn {% if lang == 'zh' %}active{% endif %}">中文</a>
-        <a href="/?lang=en" class="lang-btn {% if lang == 'en' %}active{% endif %}">EN</a>
+        <a href="/?lang=zh" class="lang-btn">中文</a>
+        <a href="/?lang=en" class="lang-btn active">EN</a>
     </div>
 
     <div class="header">
-        <a href="/" class="logo">
-            <div class="logo-icon">C</div>
-            <div class="logo-text">Carbon<span>Pass</span></div>
-        </a>
+        <a href="/" class="logo"><div class="logo-icon">C</div><div class="logo-text">Carbon<span>Pass</span></div></a>
         <div class="nav-menu">
-            <a href="#features" class="nav-item">{% if lang == 'zh' %}功能{% else %}Features{% endif %}</a>
-            <a href="/contact" class="nav-item">{% if lang == 'zh' %}联系{% else %}Contact{% endif %}</a>
-            <a href="/register" class="nav-item">{% if lang == 'zh' %}注册{% else %}Register{% endif %}</a>
-            <a href="/login" class="login-btn">{% if lang == 'zh' %}登录{% else %}Login{% endif %}</a>
+            <a href="/carbon?lang=en" class="nav-item">Carbon</a>
+            <a href="/receipt?lang=en" class="nav-item">Receipt OCR</a>
+            <a href="/cbam?lang=en" class="nav-item">CBAM</a>
+            <a href="/contact?lang=en" class="nav-item">Contact</a>
+            <a href="/register?lang=en" class="nav-item">Register</a>
+            <a href="/login?lang=en" class="login-btn">Login</a>
         </div>
     </div>
 
     <div class="hero">
-        <div class="hero-badge">🌏 CBAM 合规 · 马来西亚出口制造企业</div>
-        <h1 class="hero-title">CarbonPass<br><span>让碳排放核算与CBAM合规更简单</span></h1>
-        <p class="hero-subtitle">专为马来西亚中小出口制造企业设计的碳排放核算与 CBAM 合规报告 SaaS 平台。支持 Scope 1/2 计算、产品排放强度(SEE)、一键生成欧盟 CBAM 合规报告。</p>
-        <a href="/register" style="display:inline-block; padding:14px 32px; background:var(--primary); color:white; border-radius:8px; text-decoration:none; font-size:16px; font-weight:600; transition:all 0.2s;" onmouseover="this.style.background='#083A2E'" onmouseout="this.style.background='#0B4D3E'">免费注册 →</a>
+        <div class="hero-badge">🌏 CBAM Compliance · Malaysian Export Manufacturers</div>
+        <h1 class="hero-title">CarbonPass<br><span>Carbon Accounting & CBAM Made Simple</span></h1>
+        <p class="hero-subtitle">A SaaS platform designed for Malaysian SME export manufacturers. Scope 1/2 calculation, Product Emission Intensity (SEE), and one-click EU CBAM compliance reporting.</p>
+        <a href="/register?lang=en" style="display:inline-block; padding:14px 32px; background:var(--primary); color:white; border-radius:8px; text-decoration:none; font-size:16px; font-weight:600; transition:all 0.2s;" onmouseover="this.style.background='#083A2E'" onmouseout="this.style.background='#0B4D3E'">Register Free →</a>
         <div class="hero-stats">
-            <div class="stat-item"><div class="stat-value">4步</div><div class="stat-label">完成数据填报</div></div>
-            <div class="stat-item"><div class="stat-value">CBAM</div><div class="stat-label">欧盟合规报告</div></div>
-            <div class="stat-item"><div class="stat-value">免费</div><div class="stat-label">注册使用</div></div>
+            <div class="stat-item"><div class="stat-value">4 Steps</div><div class="stat-label">Data Entry Wizard</div></div>
+            <div class="stat-item"><div class="stat-value">CBAM</div><div class="stat-label">EU Compliant Reports</div></div>
+            <div class="stat-item"><div class="stat-value">Free</div><div class="stat-label">To Get Started</div></div>
         </div>
     </div>
 
-    <div class="features" id="features">
+    <div class="features">
         <div class="feature-card">
             <div class="feature-icon">📊</div>
-            <div class="feature-title">碳排放核算</div>
-            <div class="feature-desc">支持 Scope 1（直接排放）和 Scope 2（外购电力）核算，自动计算总排放量和产品排放强度（SEE）。</div>
-            <div class="feature-arrow">了解更多 →</div>
+            <div class="feature-title">Emission Calculation</div>
+            <div class="feature-desc">Scope 1 (direct) and Scope 2 (purchased electricity) calculation with Product Emission Intensity (SEE) per CBAM standards.</div>
+            <div class="feature-arrow">Learn More →</div>
         </div>
-
         <div class="feature-card">
             <div class="feature-icon">📋</div>
-            <div class="feature-title">4步数据填报</div>
-            <div class="feature-desc">能源消耗 → 生产数据 → 其他排放 → 确认提交。向导式填写，支持草稿自动保存。</div>
-            <div class="feature-arrow">开始填报 →</div>
+            <div class="feature-title">4-Step Data Entry</div>
+            <div class="feature-desc">Energy → Production → Other Emissions → Confirm. Wizard-style with auto-save draft.</div>
+            <div class="feature-arrow">Start →</div>
         </div>
-
         <div class="feature-card">
             <div class="feature-icon">📄</div>
-            <div class="feature-title">CBAM合规报告</div>
-            <div class="feature-desc">一键生成符合 EU CBAM 法规的 PDF 报告，包含企业信息、方法论、活动数据、排放结果等完整6节内容。</div>
-            <div class="feature-arrow">查看报告 →</div>
+            <div class="feature-title">CBAM PDF Reports</div>
+            <div class="feature-desc">Generate EU CBAM Regulation-compliant PDF reports with company info, methodology, activity data, and results in 6 sections.</div>
+            <div class="feature-arrow">View Reports →</div>
         </div>
-
         <div class="feature-card">
             <div class="feature-icon">📈</div>
-            <div class="feature-title">数据仪表盘</div>
-            <div class="feature-desc">年度排放总量趋势、产品排放强度跟踪、待办事项提醒，让碳管理一目了然。</div>
-            <div class="feature-arrow">探索更多 →</div>
+            <div class="feature-title">Dashboard</div>
+            <div class="feature-desc">Annual emission trends, product intensity tracking, pending task reminders at a glance.</div>
+            <div class="feature-arrow">Explore →</div>
         </div>
     </div>
 
     <div class="about-section">
-        <div class="about-title">关于 CarbonPass</div>
+        <div class="about-title">About CarbonPass</div>
         <div class="about-text">
-            CarbonPass 是一款专为马来西亚中小出口制造企业设计的碳排放核算与 CBAM 合规报告 SaaS 平台。
-            我们严格遵循 <strong>GHG Protocol Corporate Standard</strong> 和 <strong>EU CBAM Regulation (EU) 2023/956</strong>，
-            采用 IPCC AR6 排放因子和马来西亚 Suruhanjaya Tenaga 电网因子，
-            帮助企业精准核算碳排放、生成合规报告，轻松应对欧盟碳边境调节机制。
+            CarbonPass is a carbon accounting and CBAM compliance SaaS platform built for Malaysian SME export manufacturers.
+            We strictly follow the <strong>GHG Protocol Corporate Standard</strong> and <strong>EU CBAM Regulation (EU) 2023/956</strong>,
+            using IPCC AR6 emission factors and Suruhanjaya Tenaga Malaysia grid factors,
+            helping businesses accurately calculate emissions and generate compliant reports for the EU Carbon Border Adjustment Mechanism.
         </div>
     </div>
 
     <div class="footer">
-        CarbonPass · 2026 · 马来西亚出口制造企业碳排放核算与CBAM合规平台
+        CarbonPass · 2024 · Carbon Accounting & CBAM Compliance for Malaysian Manufacturers
     </div>
 </body>
 </html>

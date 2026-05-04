@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if lang == 'zh' %}新建填报 - CarbonPass{% else %}New Entry - CarbonPass{% endif %}</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root { --primary:#0B4D3E; --primary-dark:#083A2E; --accent:#14B8A6; --bg:#F5F7F2; --card-bg:#FFF; --text-primary:#1E293B; --text-secondary:#64748B; --border:#E2E8F0; --radius:8px; --shadow:0 1px 3px rgba(0,0,0,0.1); }
+        body { font-family:'Inter',-apple-system,'Microsoft YaHei',sans-serif; background:var(--bg); color:var(--text-primary); }
+        .main { max-width:520px; margin:60px auto; padding:0 24px; }
+        .card { background:var(--card-bg); border-radius:16px; padding:32px; box-shadow:var(--shadow); }
+        .card-title { font-size:20px; font-weight:700; text-align:center; margin-bottom:24px; }
+        .form-group { margin-bottom:16px; }
+        .form-label { display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:6px; }
+        .form-input { width:100%; padding:10px 14px; border:1.5px solid var(--border); border-radius:var(--radius); font-size:14px; background:var(--bg); outline:none; }
+        .form-input:focus { border-color:var(--primary); }
+        select.form-input { cursor:pointer; }
+        .btn-primary { width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:var(--radius); font-size:15px; font-weight:600; cursor:pointer; }
+        .btn-primary:hover { background:var(--primary-dark); }
+        .flash { padding:10px 14px; border-radius:var(--radius); margin-bottom:16px; font-size:13px; }
+        .flash.info { background:#EFF6FF; color:#2563EB; border:1px solid #BFDBFE; }
+        .flash.warning { background:#FFFBEB; color:#92400E; border:1px solid #FDE68A; }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="card">
+            <div class="card-title">{% if lang == 'zh' %}选择填报周期{% else %}Select Reporting Period{% endif %}</div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}{% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}{% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <div class="form-group">
+                    <label class="form-label">{% if lang == 'zh' %}年份{% else %}Year{% endif %}</label>
+                    <select name="year" class="form-input">
+                        {% for y in range(now.year, now.year-3, -1) %}
+                        <option value="{{ y }}" {% if y == now.year %}selected{% endif %}>{{ y }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">{% if lang == 'zh' %}季度{% else %}Quarter{% endif %}</label>
+                    <select name="quarter" class="form-input">
+                        <option value="1" {% if (now.month-1)//3+1 == 1 %}selected{% endif %}>Q1 ({% if lang == 'zh' %}1-3月{% else %}Jan-Mar{% endif %})</option>
+                        <option value="2" {% if (now.month-1)//3+1 == 2 %}selected{% endif %}>Q2 ({% if lang == 'zh' %}4-6月{% else %}Apr-Jun{% endif %})</option>
+                        <option value="3" {% if (now.month-1)//3+1 == 3 %}selected{% endif %}>Q3 ({% if lang == 'zh' %}7-9月{% else %}Jul-Sep{% endif %})</option>
+                        <option value="4" {% if (now.month-1)//3+1 == 4 %}selected{% endif %}>Q4 ({% if lang == 'zh' %}10-12月{% else %}Oct-Dec{% endif %})</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">{% if lang == 'zh' %}开始填报{% else %}Start Entry{% endif %}</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

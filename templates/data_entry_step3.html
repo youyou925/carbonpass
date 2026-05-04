@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if lang == 'zh' %}其他排放 - CarbonPass{% else %}Other Emissions - CarbonPass{% endif %}</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root { --primary:#0B4D3E; --primary-dark:#083A2E; --accent:#14B8A6; --bg:#F5F7F2; --card-bg:#FFF; --text-primary:#1E293B; --text-secondary:#64748B; --text-hint:#94A3B8; --border:#E2E8F0; --radius:8px; --shadow:0 2px 12px rgba(0,0,0,0.08); }
+        body { font-family:'Inter',-apple-system,'Microsoft YaHei',sans-serif; background:var(--bg); color:var(--text-primary); }
+        .topbar { background:var(--card-bg); padding:12px 24px; display:flex; align-items:center; border-bottom:1px solid var(--border); }
+        .logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+        .logo-icon { width:32px; height:32px; background:linear-gradient(135deg,var(--primary),var(--accent)); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:14px; }
+        .logo-text { font-size:16px; font-weight:700; }
+        .logo-text span { color:var(--primary); }
+        .main { max-width:600px; margin:0 auto; padding:24px; }
+        .stepper { display:flex; align-items:flex-start; margin-bottom:32px; }
+        .step-item { flex:1; display:flex; flex-direction:column; align-items:center; position:relative; }
+        .step-item:not(:last-child)::after { content:''; position:absolute; top:15px; left:calc(50% + 16px); right:calc(-50% + 16px); height:2px; background:var(--border); }
+        .step-item.done:not(:last-child)::after { background:var(--accent); }
+        .step-circle { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; background:var(--bg); border:2px solid var(--border); color:var(--text-hint); position:relative; z-index:1; }
+        .step-item.active .step-circle { background:var(--primary); border-color:var(--primary); color:white; }
+        .step-item.done .step-circle { background:var(--accent); border-color:var(--accent); color:white; font-size:14px; }
+        .step-label { font-size:11px; color:var(--text-hint); margin-top:6px; text-align:center; }
+        .step-item.active .step-label { color:var(--primary); font-weight:600; }
+        .step-item.done .step-label { color:var(--accent); }
+        .card { background:var(--card-bg); border-radius:12px; padding:32px; box-shadow:var(--shadow); margin-bottom:16px; }
+        .section-title { font-size:15px; font-weight:600; margin-bottom:4px; }
+        .section-hint { font-size:12px; color:var(--text-secondary); margin-bottom:16px; }
+        .input-item { background:var(--bg); border-radius:var(--radius); padding:20px; }
+        .input-label { font-size:13px; color:var(--text-secondary); margin-bottom:8px; }
+        .input-field { width:100%; padding:12px 14px; border:1.5px solid var(--border); border-radius:var(--radius); font-size:18px; font-weight:600; background:var(--card-bg); outline:none; }
+        .input-field:focus { border-color:var(--primary); }
+        .input-unit { font-size:11px; color:var(--text-hint); margin-top:4px; }
+        .btn { padding:10px 20px; border-radius:var(--radius); font-size:14px; font-weight:600; cursor:pointer; border:none; text-decoration:none; }
+        .btn-primary { background:var(--primary); color:white; }
+        .btn-primary:hover { background:var(--primary-dark); }
+        .btn-outline { background:transparent; color:var(--text-secondary); border:1.5px solid var(--border); }
+        .btn-row { display:flex; justify-content:space-between; gap:12px; margin-top:20px; }
+        .info-box { background:#FFFBEB; border:1px solid #FDE68A; border-radius:var(--radius); padding:14px; font-size:12px; color:#92400E; margin-top:16px; }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="/dashboard" class="logo"><div class="logo-icon">C</div><div class="logo-text">Carbon<span>Pass</span></div></a>
+        <span style="font-size:13px; color:var(--text-secondary); margin-left:auto;">{{ period.label(lang) }}</span>
+    </div>
+    <div class="main">
+        <div class="stepper">
+            <div class="step-item done">
+                <div class="step-circle">✓</div>
+                <div class="step-label">{% if lang == 'zh' %}能源数据{% else %}Energy{% endif %}</div>
+            </div>
+            <div class="step-item done">
+                <div class="step-circle">✓</div>
+                <div class="step-label">{% if lang == 'zh' %}生产数据{% else %}Production{% endif %}</div>
+            </div>
+            <div class="step-item active">
+                <div class="step-circle">3</div>
+                <div class="step-label">{% if lang == 'zh' %}其他排放{% else %}Other{% endif %}</div>
+            </div>
+            <div class="step-item">
+                <div class="step-circle">4</div>
+                <div class="step-label">{% if lang == 'zh' %}核对提交{% else %}Review{% endif %}</div>
+            </div>
+        </div>
+
+        <form method="POST">
+            <div class="card">
+                <div class="section-title">{% if lang == 'zh' %}🌫️ 其他排放源{% else %}🌫️ Other Emission Sources{% endif %}</div>
+                <div class="section-hint">{% if lang == 'zh' %}如果贵企业有其他已知的 CO₂ 排放量，请在此填写。可跳过。{% else %}If your facility has other known CO₂ emissions, enter them here. Optional.{% endif %}</div>
+
+                <div class="input-item">
+                    <div class="input-label">{% if lang == 'zh' %}其他已知 CO₂ 排放量{% else %}Other Known CO₂ Emissions{% endif %}</div>
+                    <input type="number" name="other_emissions" class="input-field" value="{{ period.other_emissions if period.other_emissions else '0' }}" min="0" step="0.01">
+                    <div class="input-unit">{% if lang == 'zh' %}吨 CO₂e {% else %}tonnes CO₂e{% endif %}</div>
+                </div>
+
+                <div class="info-box">
+                    <strong>{% if lang == 'zh' %}💡 说明：{% else %}💡 Note:{% endif %}</strong><br>
+                    {% if lang == 'zh' %}
+                    包括但不限于：工业流程排放、废水处理甲烷排放、公司自有车辆排放、制冷剂泄漏等。如果不确定，请留空。
+                    {% else %}
+                    Includes: industrial process emissions, wastewater methane, company vehicles, refrigerant leaks, etc. Leave blank if unsure.
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <a href="/data-entry/{{ period.id }}/step2" class="btn btn-outline">← {% if lang == 'zh' %}上一步{% else %}Previous{% endif %}</a>
+                <button type="submit" class="btn btn-primary">{% if lang == 'zh' %}保存并继续 →{% else %}Save & Continue →{% endif %}</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

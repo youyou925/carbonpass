@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if lang == 'zh' %}能源数据 - CarbonPass{% else %}Energy Data - CarbonPass{% endif %}</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --primary:#0B4D3E; --primary-dark:#083A2E; --accent:#14B8A6;
+            --bg:#F5F7F2; --card-bg:#FFF; --text-primary:#1E293B;
+            --text-secondary:#64748B; --text-hint:#94A3B8;
+            --border:#E2E8F0; --radius:8px; --shadow:0 2px 12px rgba(0,0,0,0.08);
+        }
+        body { font-family:'Inter',-apple-system,'Microsoft YaHei',sans-serif; background:var(--bg); color:var(--text-primary); }
+        .topbar { background:var(--card-bg); padding:12px 24px; display:flex; align-items:center; border-bottom:1px solid var(--border); }
+        .logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+        .logo-icon { width:32px; height:32px; background:linear-gradient(135deg,var(--primary),var(--accent)); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:14px; }
+        .logo-text { font-size:16px; font-weight:700; }
+        .logo-text span { color:var(--primary); }
+        .period-badge { margin-left:auto; font-size:12px; background:rgba(11,77,62,0.08); color:var(--primary); padding:4px 12px; border-radius:20px; font-weight:600; }
+        .main { max-width:680px; margin:0 auto; padding:28px 24px; }
+
+        /* Modern Step Indicator */
+        .stepper { display:flex; align-items:flex-start; margin-bottom:32px; position:relative; }
+        .step-item { flex:1; display:flex; flex-direction:column; align-items:center; position:relative; }
+        .step-item:not(:last-child)::after {
+            content:''; position:absolute; top:15px;
+            left:calc(50% + 16px); right:calc(-50% + 16px);
+            height:2px; background:var(--border);
+        }
+        .step-item.done:not(:last-child)::after { background:var(--accent); }
+        .step-circle {
+            width:30px; height:30px; border-radius:50%; display:flex; align-items:center;
+            justify-content:center; font-size:12px; font-weight:700;
+            background:var(--bg); border:2px solid var(--border); color:var(--text-hint);
+            position:relative; z-index:1;
+        }
+        .step-item.active .step-circle { background:var(--primary); border-color:var(--primary); color:white; }
+        .step-item.done .step-circle { background:var(--accent); border-color:var(--accent); color:white; font-size:14px; }
+        .step-label { font-size:11px; color:var(--text-hint); margin-top:6px; text-align:center; line-height:1.3; }
+        .step-item.active .step-label { color:var(--primary); font-weight:600; }
+        .step-item.done .step-label { color:var(--accent); }
+
+        /* Card */
+        .card { background:var(--card-bg); border-radius:12px; padding:24px; box-shadow:var(--shadow); margin-bottom:20px; }
+        .card-header { margin-bottom:20px; }
+        .card-title { font-size:16px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--text-primary); margin-bottom:4px; }
+        .card-hint { font-size:13px; color:var(--text-secondary); line-height:1.5; }
+
+        /* Energy Table */
+        .energy-list { border:1.5px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+        .energy-row { display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--border); background:var(--card-bg); transition:background .15s; }
+        .energy-row:last-child { border-bottom:none; }
+        .energy-row:hover { background:#FAFAFA; }
+        .energy-info { flex:1; }
+        .energy-name { font-size:14px; font-weight:500; color:var(--text-primary); }
+        .energy-tip { font-size:11px; color:var(--text-hint); margin-top:2px; }
+        .energy-input-wrap { display:flex; align-items:center; gap:8px; }
+        .energy-input {
+            width:130px; padding:8px 12px; border:1.5px solid var(--border);
+            border-radius:6px; font-size:14px; text-align:right; outline:none;
+            transition:border-color .2s; background:var(--bg);
+        }
+        .energy-input:focus { border-color:var(--primary); background:white; }
+        .unit-tag { font-size:12px; font-weight:600; color:var(--text-secondary); min-width:32px; text-align:left; }
+
+        /* Other fuel row */
+        .other-row { display:flex; gap:12px; align-items:center; padding:14px 16px; border-top:1px solid var(--border); background:#FAFAFA; }
+        .other-label { font-size:13px; color:var(--text-secondary); min-width:100px; }
+        .other-name-input { flex:1; padding:8px 12px; border:1.5px solid var(--border); border-radius:6px; font-size:13px; outline:none; }
+        .other-name-input:focus { border-color:var(--primary); }
+        .other-unit-input { width:60px; padding:8px 8px; border:1.5px solid var(--border); border-radius:6px; font-size:13px; outline:none; text-align:center; }
+        .other-unit-input:focus { border-color:var(--primary); }
+
+        /* Note */
+        .hint-note { font-size:12px; color:var(--text-secondary); background:rgba(20,184,166,0.06); border:1px solid rgba(20,184,166,0.2); border-radius:var(--radius); padding:10px 14px; margin-top:4px; }
+
+        /* Buttons */
+        .btn-row { display:flex; justify-content:space-between; gap:12px; margin-top:4px; }
+        .btn { padding:12px 28px; border-radius:var(--radius); font-size:14px; font-weight:600; cursor:pointer; border:none; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:all .2s; }
+        .btn-primary { background:var(--primary); color:white; }
+        .btn-primary:hover { background:var(--primary-dark); }
+        .btn-outline { background:transparent; color:var(--text-secondary); border:1.5px solid var(--border); }
+        .btn-outline:hover { border-color:var(--primary); color:var(--primary); }
+        @media (max-width:600px) { .energy-row { flex-direction:column; align-items:flex-start; gap:8px; } .other-row { flex-wrap:wrap; } }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="/dashboard" class="logo">
+            <div class="logo-icon">C</div>
+            <div class="logo-text">Carbon<span>Pass</span></div>
+        </a>
+        <span class="period-badge">{{ period.label(lang) }}</span>
+    </div>
+    <div class="main">
+        <!-- Step Indicator -->
+        <div class="stepper">
+            <div class="step-item active">
+                <div class="step-circle">1</div>
+                <div class="step-label">{% if lang == 'zh' %}能源数据{% else %}Energy{% endif %}</div>
+            </div>
+            <div class="step-item">
+                <div class="step-circle">2</div>
+                <div class="step-label">{% if lang == 'zh' %}生产数据{% else %}Production{% endif %}</div>
+            </div>
+            <div class="step-item">
+                <div class="step-circle">3</div>
+                <div class="step-label">{% if lang == 'zh' %}其他排放{% else %}Other{% endif %}</div>
+            </div>
+            <div class="step-item">
+                <div class="step-circle">4</div>
+                <div class="step-label">{% if lang == 'zh' %}核对提交{% else %}Review{% endif %}</div>
+            </div>
+        </div>
+
+        <form method="POST">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">⚡ {% if lang == 'zh' %}能源消耗数据{% else %}Energy Consumption{% endif %}</div>
+                    <div class="card-hint">{% if lang == 'zh' %}请填写本填报周期内，工厂消耗的各类能源数量。数据来源：电费账单、采购单据。如果某项没有使用，请填写 0。{% else %}Enter energy consumption for this period. Source: utility bills, purchase records. Fill 0 for items not used.{% endif %}</div>
+                </div>
+
+                <div class="energy-list">
+                    <div class="energy-row">
+                        <div class="energy-info">
+                            <div class="energy-name">{% if lang == 'zh' %}外购电力（电网）{% else %}Grid Electricity{% endif %}</div>
+                            <div class="energy-tip">{% if lang == 'zh' %}来源：电费账单总用电量 · 必填{% else %}Source: total kWh from utility bill · Required{% endif %}</div>
+                        </div>
+                        <div class="energy-input-wrap">
+                            <input type="number" name="electricity_kwh" class="energy-input" value="{{ energy.electricity_kwh if energy else '0' }}" min="0" step="0.01" required>
+                            <span class="unit-tag">kWh</span>
+                        </div>
+                    </div>
+                    <div class="energy-row">
+                        <div class="energy-info">
+                            <div class="energy-name">{% if lang == 'zh' %}柴油{% else %}Diesel{% endif %}</div>
+                            <div class="energy-tip">{% if lang == 'zh' %}来源：采购单据 / 加油记录{% else %}Source: purchase receipts{% endif %}</div>
+                        </div>
+                        <div class="energy-input-wrap">
+                            <input type="number" name="diesel_litres" class="energy-input" value="{{ energy.diesel_litres if energy else '0' }}" min="0" step="0.01">
+                            <span class="unit-tag">L</span>
+                        </div>
+                    </div>
+                    <div class="energy-row">
+                        <div class="energy-info">
+                            <div class="energy-name">{% if lang == 'zh' %}汽油{% else %}Petrol{% endif %}</div>
+                            <div class="energy-tip">{% if lang == 'zh' %}来源：采购单据 / 加油记录{% else %}Source: purchase receipts{% endif %}</div>
+                        </div>
+                        <div class="energy-input-wrap">
+                            <input type="number" name="petrol_litres" class="energy-input" value="{{ energy.petrol_litres if energy else '0' }}" min="0" step="0.01">
+                            <span class="unit-tag">L</span>
+                        </div>
+                    </div>
+                    <div class="energy-row">
+                        <div class="energy-info">
+                            <div class="energy-name">{% if lang == 'zh' %}天然气{% else %}Natural Gas{% endif %}</div>
+                            <div class="energy-tip">{% if lang == 'zh' %}来源：账单 / 流量计读数{% else %}Source: gas bill / meter reading{% endif %}</div>
+                        </div>
+                        <div class="energy-input-wrap">
+                            <input type="number" name="natural_gas_m3" class="energy-input" value="{{ energy.natural_gas_m3 if energy else '0' }}" min="0" step="0.01">
+                            <span class="unit-tag">m³</span>
+                        </div>
+                    </div>
+                    <div class="energy-row">
+                        <div class="energy-info">
+                            <div class="energy-name">{% if lang == 'zh' %}液化石油气（LPG）{% else %}Liquefied Petroleum Gas (LPG){% endif %}</div>
+                            <div class="energy-tip">{% if lang == 'zh' %}来源：采购记录{% else %}Source: purchase records{% endif %}</div>
+                        </div>
+                        <div class="energy-input-wrap">
+                            <input type="number" name="lpg_kg" class="energy-input" value="{{ energy.lpg_kg if energy else '0' }}" min="0" step="0.01">
+                            <span class="unit-tag">kg</span>
+                        </div>
+                    </div>
+                    <div class="energy-row">
+                        <div class="energy-info">
+                            <div class="energy-name">{% if lang == 'zh' %}煤炭{% else %}Coal{% endif %}</div>
+                            <div class="energy-tip">{% if lang == 'zh' %}来源：采购记录{% else %}Source: purchase records{% endif %}</div>
+                        </div>
+                        <div class="energy-input-wrap">
+                            <input type="number" name="coal_tonne" class="energy-input" value="{{ energy.coal_tonne if energy else '0' }}" min="0" step="0.01">
+                            <span class="unit-tag">{% if lang == 'zh' %}吨{% else %}tonne{% endif %}</span>
+                        </div>
+                    </div>
+                    <!-- Other Fuel -->
+                    <div class="other-row">
+                        <span class="other-label">{% if lang == 'zh' %}其他燃料（选填）{% else %}Other Fuel (optional){% endif %}</span>
+                        <input type="text" name="other_fuel_label" class="other-name-input" value="{{ energy.other_fuel_label if energy else '' }}" placeholder="{% if lang == 'zh' %}燃料名称{% else %}Fuel name{% endif %}">
+                        <input type="number" name="other_fuel_amount" class="energy-input" value="{{ energy.other_fuel_amount if energy else '0' }}" min="0" step="0.01" style="width:100px;">
+                        <input type="text" name="other_fuel_unit" class="other-unit-input" value="{{ energy.other_fuel_unit if energy else '' }}" placeholder="{% if lang == 'zh' %}单位{% else %}unit{% endif %}">
+                    </div>
+                </div>
+
+                <div class="hint-note" style="margin-top:14px;">
+                    💡 {% if lang == 'zh' %}如果某项没有使用，请填写 0，不要留空。电力排放因子将根据您公司所在州属自动选择（{{ period.company.state if period.company and period.company.state else '请先完善企业信息' }}）。{% else %}Fill 0 for unused items. The grid emission factor will be selected based on your company's state ({{ period.company.state if period.company and period.company.state else 'please complete company profile' }}).{% endif %}
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <a href="/data-entry" class="btn btn-outline">← {% if lang == 'zh' %}返回{% else %}Back{% endif %}</a>
+                <button type="submit" class="btn btn-primary">{% if lang == 'zh' %}保存并继续{% else %}Save & Continue{% endif %} →</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

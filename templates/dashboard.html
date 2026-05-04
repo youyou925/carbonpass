@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if lang == 'zh' %}仪表盘 - CarbonPass{% else %}Dashboard - CarbonPass{% endif %}</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --primary: #0B4D3E; --primary-dark: #083A2E; --accent: #14B8A6;
+            --warning: #F59E0B; --error: #DC2626; --success: #16A34A;
+            --bg: #F5F7F2; --card-bg: #FFFFFF;
+            --text-primary: #1E293B; --text-secondary: #64748B; --text-hint: #94A3B8;
+            --border: #E2E8F0; --radius: 8px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Microsoft YaHei', sans-serif; background:var(--bg); color:var(--text-primary); }
+        h1, .metric-value { font-family: 'Outfit', 'Inter', sans-serif; }
+        .lang-switch { position:fixed; top:12px; left:12px; z-index:1000; display:flex; background:var(--card-bg); border-radius:20px; box-shadow:var(--shadow); overflow:hidden; }
+        .lang-btn { padding:6px 12px; font-size:11px; font-weight:600; color:var(--text-secondary); text-decoration:none; }
+        .lang-btn.active { background:var(--primary); color:white; }
+        .topbar { background:var(--card-bg); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; }
+        .logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+        .logo-icon { width:32px; height:32px; background:linear-gradient(135deg, var(--primary), var(--accent)); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:14px; }
+        .logo-text { font-size:16px; font-weight:700; color:var(--text-primary); }
+        .logo-text span { color:var(--primary); }
+        .nav { display:flex; gap:4px; }
+        .nav a { padding:8px 14px; border-radius:var(--radius); text-decoration:none; color:var(--text-secondary); font-size:13px; font-weight:500; transition:all .2s; }
+        .nav a:hover, .nav a.active { background:var(--bg); color:var(--primary); }
+        .user-section { display:flex; align-items:center; gap:12px; }
+        .user-section img { width:32px; height:32px; border-radius:50%; object-fit:cover; }
+        .user-name { font-size:13px; color:var(--text-primary); }
+        .main { max-width:1100px; margin:0 auto; padding:24px; }
+        .page-title { font-size:20px; font-weight:700; margin-bottom:20px; }
+        /* Metric Cards */
+        .metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+        .metric-card { background:var(--card-bg); border-radius:12px; padding:20px; box-shadow:var(--shadow); border-top:3px solid var(--border); }
+        .metric-card.c1 { border-top-color:var(--primary); }
+        .metric-card.c2 { border-top-color:var(--accent); }
+        .metric-card.c3 { border-top-color:var(--warning); }
+        .metric-card.c4 { border-top-color:var(--success); }
+        .metric-label { font-size:12px; color:var(--text-secondary); margin-bottom:8px; font-weight:500; }
+        .metric-value { font-size:32px; font-weight:700; color:var(--text-primary); line-height:1; }
+        .metric-unit { font-size:11px; color:var(--text-hint); margin-top:4px; }
+        /* Alert */
+        .alert { background:#FFFBEB; border:1px solid #FDE68A; border-radius:var(--radius); padding:12px 16px; margin-bottom:24px; font-size:13px; color:#92400E; display:flex; align-items:center; gap:8px; }
+        .alert.warning { background:#FEF2F2; border-color:#FECACA; color:#991B1B; }
+        /* Chart Section */
+        .chart-card { background:var(--card-bg); border-radius:12px; padding:20px; box-shadow:var(--shadow); margin-bottom:24px; }
+        .chart-title { font-size:14px; font-weight:600; margin-bottom:16px; }
+        .chart-wrap { height:280px; }
+        /* Actions */
+        .actions { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px; }
+        .action-btn { display:flex; align-items:center; justify-content:center; gap:8px; padding:16px; border-radius:12px; text-decoration:none; font-size:14px; font-weight:600; border:none; cursor:pointer; transition:all .2s; }
+        .action-btn.primary { background:var(--primary); color:white; }
+        .action-btn.primary:hover { background:var(--primary-dark); }
+        .action-btn.secondary { background:var(--card-bg); color:var(--text-primary); border:1.5px solid var(--border); }
+        .action-btn.secondary:hover { border-color:var(--primary); }
+        @media (max-width:768px) { .metrics { grid-template-columns:repeat(2,1fr); } .actions { grid-template-columns:1fr; } .nav a { padding:6px 10px; font-size:12px; } }
+    </style>
+</head>
+<body>
+    <div class="lang-switch">
+        <a href="/dashboard?lang=zh" class="lang-btn {% if lang == 'zh' %}active{% endif %}">中文</a>
+        <a href="/dashboard?lang=en" class="lang-btn {% if lang == 'en' %}active{% endif %}">EN</a>
+    </div>
+    <div class="topbar">
+        <div style="display:flex; align-items:center; gap:24px;">
+            <a href="/dashboard" class="logo">
+                <div class="logo-icon">C</div>
+                <div class="logo-text">Carbon<span>Pass</span></div>
+            </a>
+            <div class="nav">
+                <a href="/dashboard" class="active">{% if lang == 'zh' %}仪表盘{% else %}Dashboard{% endif %}</a>
+                <a href="/data-entry">{% if lang == 'zh' %}数据填报{% else %}Data Entry{% endif %}</a>
+                <a href="/results">{% if lang == 'zh' %}核算结果{% else %}Results{% endif %}</a>
+                <a href="/reports">{% if lang == 'zh' %}报告管理{% else %}Reports{% endif %}</a>
+                <a href="/company/profile">{% if lang == 'zh' %}企业设置{% else %}Settings{% endif %}</a>
+                {% if current_user.role == 'system_admin' %}<a href="/admin">{% if lang == 'zh' %}管理{% else %}Admin{% endif %}</a>{% endif %}
+            </div>
+        </div>
+        <div class="user-section">
+            <span class="user-name">{{ current_user.name }}</span>
+            <a href="/logout" style="font-size:12px; color:var(--text-secondary); text-decoration:none;">{% if lang == 'zh' %}退出{% else %}Logout{% endif %}</a>
+        </div>
+    </div>
+    <div class="main">
+        <h1 class="page-title">{% if lang == 'zh' %}仪表盘{% else %}Dashboard{% endif %}</h1>
+
+        <!-- Alert for incomplete quarter -->
+        {% if not has_current %}
+        <div class="alert">
+            <span>⚠️</span>
+            {% if lang == 'zh' %}
+            <span>{{ current_year }} 年 Q{{ current_q }} 填报尚未完成，CBAM 申报截止日期：{{ current_year + 1 }}-09-30</span>
+            {% else %}
+            <span>{{ current_year }} Q{{ current_q }} entry not yet completed. CBAM deadline: {{ current_year + 1 }}-09-30</span>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Metrics -->
+        <div class="metrics">
+            <div class="metric-card c1">
+                <div class="metric-label">{% if lang == 'zh' %}本年度累计排放{% else %}YTD Emissions{% endif %}</div>
+                <div class="metric-value">{{ ytd_emissions|default('0.00', true) }}</div>
+                <div class="metric-unit">tonnes CO₂e</div>
+            </div>
+            <div class="metric-card c2">
+                <div class="metric-label">{% if lang == 'zh' %}最新排放强度（SEE）{% else %}Latest Intensity (SEE){% endif %}</div>
+                <div class="metric-value">{{ latest_intensity|default('—', true) }}</div>
+                <div class="metric-unit">{% if latest_unit %}tCO₂e/{{ latest_unit }}{% else %}tCO₂e/unit{% endif %}</div>
+            </div>
+            <div class="metric-card c3">
+                <div class="metric-label">{% if lang == 'zh' %}待完成填报{% else %}Pending Entries{% endif %}</div>
+                <div class="metric-value">{{ pending }}</div>
+                <div class="metric-unit">{% if lang == 'zh' %}期{% else %}period(s){% endif %}</div>
+            </div>
+            <div class="metric-card c4">
+                <div class="metric-label">{% if lang == 'zh' %}已生成报告{% else %}Reports Generated{% endif %}</div>
+                <div class="metric-value">{{ total_reports }}</div>
+                <div class="metric-unit">{% if lang == 'zh' %}份{% else %}report(s){% endif %}</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="actions">
+            <a href="/data-entry/new" class="action-btn primary">
+                <span>+</span> {% if lang == 'zh' %}新建填报{% else %}New Entry{% endif %}
+            </a>
+            <a href="/reports" class="action-btn secondary">
+                {% if lang == 'zh' %}下载最新报告{% else %}Download Report{% endif %}
+            </a>
+            <a href="/company/profile" class="action-btn secondary">
+                {% if lang == 'zh' %}企业设置{% else %}Settings{% endif %}
+            </a>
+        </div>
+
+        <!-- Trend Chart -->
+        <div class="chart-card">
+            <div class="chart-title">{% if lang == 'zh' %}排放趋势（近4季度）{% else %}Emissions Trend (Last 4 Quarters){% endif %}</div>
+            <div class="chart-wrap">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const labels = {{ trend_labels|safe }};
+        const scope1 = {{ trend_scope1|safe }};
+        const scope2 = {{ trend_scope2|safe }};
+        const total = {{ trend_total|safe }};
+
+        if (labels.length > 0) {
+            new Chart(document.getElementById('trendChart'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Scope 1', data: scope1, backgroundColor: '#0B4D3E', borderRadius: 4 },
+                        { label: 'Scope 2', data: scope2, backgroundColor: '#14B8A6', borderRadius: 4 },
+                        { label: 'Total', data: total, backgroundColor: '#F59E0B', borderRadius: 4 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { font: { size: 12 } } } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#E2E8F0' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
